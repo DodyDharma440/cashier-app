@@ -20,7 +20,10 @@
       "@custom-types/*": ["app/types/*"],
       "@context/*": ["app/context/*"],
       "@utils/*": ["app/utils/*"],
-      "@api/*": ["app/api/*"]
+      "@api/*": ["app/api/*"],
+      "@models/*": ["app/models/*"],
+      "@middleware/*": ["app/middleware/*"],
+      "@enums/*": ["app/enums/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
