@@ -23,7 +23,8 @@
       "@api/*": ["app/api/*"],
       "@models/*": ["app/models/*"],
       "@middleware/*": ["app/middleware/*"],
-      "@enums/*": ["app/enums/*"]
+      "@enums/*": ["app/enums/*"],
+      "@actions/*": ["app/actions/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

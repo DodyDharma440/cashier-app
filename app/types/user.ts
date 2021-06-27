@@ -48,3 +48,13 @@ export interface IUserResponse {
   token?: string;
   message?: string;
 }
+
+export interface IUserAuthData {
+  result: {
+    userId: string;
+    username: string;
+    name: string;
+    status: UserStatus.admin | UserStatus.kasir;
+  };
+  token: string;
+}

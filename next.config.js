@@ -3,4 +3,7 @@ module.exports = {
     mongodbUri: process.env.NEXT_PUBLIC_MONGODB_URI,
     jwtKey: process.env.NEXT_PUBLIC_JWT_KEY,
   },
+  images: {
+    domains: ["www.nicepng.com", "localhost"],
+  },
 };
