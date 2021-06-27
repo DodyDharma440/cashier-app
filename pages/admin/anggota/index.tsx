@@ -23,7 +23,7 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <p>Dashboard</p>
+      <p>anggota</p>
       <Button onClick={handleSignOut} variant="contained" color="primary">
         Logout
       </Button>

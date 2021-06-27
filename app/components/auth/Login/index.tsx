@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import {
   TextField,
@@ -34,6 +35,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     input: {
       margin: `${theme.spacing(2)}px 0px`,
+    },
+    image: {
+      marginBottom: theme.spacing(2),
     },
   })
 );
@@ -91,6 +95,14 @@ const Login = () => {
   return (
     <Box className={classes.wrapper}>
       <Box className={classes.titleWrapper}>
+        <Box className={classes.image}>
+          <Image
+            src="/assets/images/logo.png"
+            alt="Logo Cashier"
+            width={140}
+            height={100}
+          />
+        </Box>
         <Typography variant="h3" className={classes.title}>
           Login
         </Typography>

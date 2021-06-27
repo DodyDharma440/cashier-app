@@ -24,7 +24,9 @@
       "@models/*": ["app/models/*"],
       "@middleware/*": ["app/middleware/*"],
       "@enums/*": ["app/enums/*"],
-      "@actions/*": ["app/actions/*"]
+      "@actions/*": ["app/actions/*"],
+      "@hoc/*": ["app/hoc/*"],
+      "@constants/*": ["app/constants/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
