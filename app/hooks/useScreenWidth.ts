@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 const useScreenWidth = () => {
-  const [width, setWidth] = useState(0);
+  const [width, setWidth] = useState<number | null>(null);
 
   useEffect(() => {
     const handleResize = (): void => {

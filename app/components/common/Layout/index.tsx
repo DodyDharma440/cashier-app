@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { Box, Drawer, AppBar, Toolbar, IconButton } from "@material-ui/core";
 import { HiMenu } from "react-icons/hi";
 import { Sidebar, SidebarMenuItem } from "@components/common";
 import { UserStatus } from "@enums/user";
-import { useScreenWidth, useUserData } from "@hooks/index";
+import { useScreenWidth, useUserData, useDisclosure } from "@hooks/index";
 import { menuDataAdmin, menuDataKasir } from "@constants/sidebarItem";
 import { IMenuItem } from "@custom-types/layout";
 
@@ -30,18 +30,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Layout: React.FC<Props> = ({ children }) => {
   const classes = useStyles();
-  const [openDrawer, setOpenDrawer] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const userData = useUserData();
   const status = userData?.result.status;
   const screenWidth = useScreenWidth();
-
-  const handleCloseDrawer = () => {
-    setOpenDrawer(false);
-  };
-
-  const handleOpenDrawer = () => {
-    setOpenDrawer(true);
-  };
 
   const LayoutSidebar = () => (
     <Sidebar
@@ -54,16 +46,16 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   return (
     <Box id="layout">
-      {screenWidth < 960 ? (
+      {screenWidth && screenWidth < 960 ? (
         <>
           <AppBar position="fixed" className={classes.appBar} elevation={2}>
             <Toolbar>
-              <IconButton onClick={handleOpenDrawer}>
+              <IconButton onClick={onOpen}>
                 <HiMenu />
               </IconButton>
             </Toolbar>
           </AppBar>
-          <Drawer anchor="left" open={openDrawer} onClose={handleCloseDrawer}>
+          <Drawer anchor="left" open={isOpen} onClose={onClose}>
             <LayoutSidebar />
           </Drawer>
         </>
