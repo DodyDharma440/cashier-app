@@ -39,11 +39,9 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     if (userData && userData?.token) {
-      const { status } = userData.result;
-
-      if (status === UserStatus.admin) {
+      if (userData?.result?.status === UserStatus.admin) {
         router.replace("/admin/dashboard");
-      } else if (status === UserStatus.kasir) {
+      } else if (userData?.result?.status === UserStatus.kasir) {
         router.replace("/kasir/dashboard");
       }
     }

@@ -28,7 +28,7 @@ export const UserProvider = ({ children }: Props) => {
   const [userToken, setUserToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const cookieData = getCookie("auth-token");
+    const cookieData = getCookie("auth_token");
 
     if (cookieData[0] !== "") {
       setUserToken(cookieData);

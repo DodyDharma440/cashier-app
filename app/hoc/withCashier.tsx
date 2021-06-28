@@ -10,22 +10,24 @@ const withCashier = (WrappedComponent: React.FC<Props>) => {
   return (props: any) => {
     if (typeof window !== "undefined") {
       const router = useRouter();
-      const { userData } = useUserData();
+      const userData = useUserData();
 
-      if (!userData?.token) {
-        router.replace("/");
-        return <AppLoading />;
+      if (userData) {
+        if (!userData?.token) {
+          router.replace("/");
+          return <AppLoading />;
+        }
+
+        if (
+          userData?.result.status &&
+          userData?.result.status !== UserStatus.kasir
+        ) {
+          router.back();
+          return <AppLoading />;
+        }
+
+        return <WrappedComponent {...props} />;
       }
-
-      if (
-        userData?.result.status &&
-        userData?.result.status !== UserStatus.kasir
-      ) {
-        router.back();
-        return <AppLoading />;
-      }
-
-      return <WrappedComponent {...props} />;
     }
 
     return <AppLoading />;

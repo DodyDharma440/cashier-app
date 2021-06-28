@@ -4,7 +4,6 @@ import { Box, Drawer, AppBar, Toolbar, IconButton } from "@material-ui/core";
 import { HiMenu } from "react-icons/hi";
 import { Sidebar, SidebarMenuItem } from "@components/common";
 import { UserStatus } from "@enums/user";
-import { signOut } from "@actions/user";
 import { useScreenWidth, useUserData } from "@hooks/index";
 import { menuDataAdmin, menuDataKasir } from "@constants/sidebarItem";
 import { IMenuItem } from "@custom-types/layout";
@@ -55,7 +54,7 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   return (
     <Box id="layout">
-      {screenWidth && screenWidth < 960 ? (
+      {screenWidth < 960 ? (
         <>
           <AppBar position="fixed" className={classes.appBar} elevation={2}>
             <Toolbar>

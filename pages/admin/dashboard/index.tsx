@@ -14,12 +14,14 @@ const Dashboard = () => {
 
   useEffect(() => {
     console.log("user data from admin => ", userData);
-  }, []);
+  }, [userData]);
 
   const handleSignOut = () => {
-    signOut(() => {
-      setUserToken(null);
-      router.replace("/");
+    signOut((success: any, error: any) => {
+      if (success) {
+        setUserToken(null);
+        router.replace("/");
+      }
     });
   };
 
