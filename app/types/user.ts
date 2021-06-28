@@ -40,6 +40,7 @@ export interface IUserResponse {
   users?: IUser[];
   user?: IUser;
   newUser?: IUser;
+  updatedUser?: IUser;
   result?: {
     userId: string;
     username: string;
@@ -50,14 +51,14 @@ export interface IUserResponse {
   message?: string;
 }
 
+interface IUserDecodedToken {
+  userId: string;
+  username: string;
+  name: string;
+  status: UserStatus.admin | UserStatus.kasir;
+}
+
 export interface IUserAuthData {
-  result:
-    | {
-        userId: string;
-        username: string;
-        name: string;
-        status: UserStatus.admin | UserStatus.kasir;
-      }
-    | any;
+  result: IUserDecodedToken | any;
   token: string;
 }

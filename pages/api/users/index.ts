@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
-import cookie from "cookie";
 import dbConnect from "@utils/dbConnect";
-import jwt from "jsonwebtoken";
 import User from "@models/user";
 import { withAuth } from "@middleware/auth";
 import { IUserFixedForm, IUserResponse, IUser } from "@custom-types/user";
@@ -16,9 +14,6 @@ const handler = async (
 ) => {
   const { method, body } = req;
 
-  const formData: IUserFixedForm = body;
-  const { name, username, status } = formData;
-
   switch (method) {
     case "GET":
       try {
@@ -29,8 +24,6 @@ const handler = async (
         }
 
         const users = await User.find();
-
-        console.log(req.cookies);
 
         res.status(200).json({
           users,
@@ -43,6 +36,9 @@ const handler = async (
       break;
 
     case "POST":
+      const formData: IUserFixedForm = body;
+      const { name, username, status } = formData;
+
       try {
         if (!req.userData) {
           return res.status(401).json({
