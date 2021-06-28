@@ -28,8 +28,6 @@ const withCashier = (WrappedComponent: React.FC<Props>) => {
 
         return <WrappedComponent {...props} />;
       }
-
-      router.replace("/");
     }
 
     return <AppLoading />;

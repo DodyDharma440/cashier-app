@@ -1,5 +1,5 @@
 import React from "react";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { AppLoading } from "@components/common";
 import { useUserData } from "@hooks/index";
 import { UserStatus } from "@enums/user";
@@ -15,7 +15,6 @@ const withAdmin = (WrappedComponent: React.FC<Props>) => {
       if (userData) {
         if (!userData?.token) {
           router.replace("/");
-          console.log("token not found");
           return <AppLoading />;
         }
 
@@ -24,14 +23,11 @@ const withAdmin = (WrappedComponent: React.FC<Props>) => {
           userData?.result.status !== UserStatus.admin
         ) {
           router.back();
-          console.log("isnotadmin");
           return <AppLoading />;
         }
 
         return <WrappedComponent {...props} />;
       }
-
-      router.replace("/");
     }
 
     return <AppLoading />;
