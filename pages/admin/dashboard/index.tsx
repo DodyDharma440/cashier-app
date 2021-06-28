@@ -17,11 +17,9 @@ const Dashboard = () => {
   }, [userData]);
 
   const handleSignOut = () => {
-    signOut((success: any, error: any) => {
-      if (success) {
-        setUserToken(null);
-        router.replace("/");
-      }
+    signOut(() => {
+      setUserToken(null);
+      router.replace("/");
     });
   };
 
