@@ -13,30 +13,30 @@ type Props = {
 };
 
 type Context = {
-  userData: IUserAuthData | null;
-  setUserData: Dispatch<SetStateAction<IUserAuthData | null>>;
+  userToken: string | null;
+  setUserToken: Dispatch<SetStateAction<string | null>>;
 };
 
 const initialContext: Context = {
-  userData: null,
-  setUserData: () => {},
+  userToken: null,
+  setUserToken: () => {},
 };
 
 export const UserContext = createContext(initialContext);
 
 export const UserProvider = ({ children }: Props) => {
-  const [userData, setUserData] = useState<IUserAuthData | null>(null);
+  const [userToken, setUserToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const cookieData = getCookie("user-data");
+    const cookieData = getCookie("auth-token");
 
     if (cookieData[0] !== "") {
-      setUserData(JSON.parse(getCookie("user-data")));
+      setUserToken(cookieData);
     }
   }, []);
 
   return (
-    <UserContext.Provider value={{ userData, setUserData }}>
+    <UserContext.Provider value={{ userToken, setUserToken }}>
       {children}
     </UserContext.Provider>
   );

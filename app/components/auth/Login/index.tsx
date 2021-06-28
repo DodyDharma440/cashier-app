@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AxiosResponse } from "axios";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
@@ -11,6 +12,7 @@ import {
   Box,
   Button,
 } from "@material-ui/core";
+import { UserContext } from "@context/user";
 import { HiOutlineEye } from "react-icons/hi";
 import { IUserLoginForm, IUserAuthData } from "@custom-types/user";
 import { signIn } from "@actions/user";
@@ -46,7 +48,7 @@ const Login = () => {
   const classes = useStyles();
   const router = useRouter();
 
-  const { setUserData } = useUserData();
+  const { userToken, setUserToken } = useContext(UserContext);
 
   const [inputValue, setInputValue] = useState<IUserLoginForm>({
     username: "",
@@ -68,13 +70,13 @@ const Login = () => {
     setShowPassword((prevState) => !prevState);
   };
 
-  const callbackSignIn = (data: IUserAuthData, error: any) => {
+  const callbackSignIn = (res: AxiosResponse, error: any) => {
     setLoading(false);
 
-    if (data) {
-      setUserData(data);
+    if (res) {
+      setUserToken(res.data.token);
 
-      if (data.result.status === "admin") {
+      if (res.data.result.status === "admin") {
         router.replace("/admin/dashboard");
       } else {
         router.replace("/kasir/dashboard");

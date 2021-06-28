@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import { Button } from "@material-ui/core";
 import { useUserData } from "@hooks/index";
 import { signOut } from "@actions/user";
 import { withAdmin } from "@hoc/index";
 import { Layout } from "@components/common";
+import { UserContext } from "@context/user";
 
 const Dashboard = () => {
-  const { userData, setUserData } = useUserData();
+  const userData = useUserData();
   const router = useRouter();
+  const { setUserToken } = useContext(UserContext);
 
   useEffect(() => {
     console.log("user data from admin => ", userData);
@@ -16,7 +18,7 @@ const Dashboard = () => {
 
   const handleSignOut = () => {
     signOut(() => {
-      setUserData(null);
+      setUserToken(null);
       router.replace("/");
     });
   };

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
+import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import dbConnect from "@utils/dbConnect";
 import { IUser, IUserResponse, IUserLoginForm } from "@custom-types/user";
@@ -48,7 +49,7 @@ export default async (
       { expiresIn: "1d" }
     );
 
-    res.status(200).json({
+    const userData = {
       result: {
         userId: _id,
         name,
@@ -56,7 +57,18 @@ export default async (
         status,
       },
       token,
-    });
+    };
+
+    res.setHeader(
+      "Set-Cookie",
+      cookie.serialize("auth_token", token, {
+        sameSite: "strict",
+        maxAge: 3600 * 24,
+        path: "/",
+      })
+    );
+
+    res.status(200).json(userData);
   } catch (error) {
     res.status(500).json({
       message: error.message,

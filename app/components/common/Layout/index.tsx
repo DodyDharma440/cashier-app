@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Layout: React.FC<Props> = ({ children }) => {
   const classes = useStyles();
   const [openDrawer, setOpenDrawer] = useState(false);
-  const { userData } = useUserData();
+  const userData = useUserData();
   const status = userData?.result.status;
   const screenWidth = useScreenWidth();
 
@@ -43,26 +43,6 @@ const Layout: React.FC<Props> = ({ children }) => {
   const handleOpenDrawer = () => {
     setOpenDrawer(true);
   };
-
-  const renderMenuItem = () => {
-    return status === UserStatus.admin
-      ? menuDataAdmin.map((item, index) => (
-          <SidebarMenuItem key={index} item={item} />
-        ))
-      : menuDataKasir.map((item, index) => (
-          <SidebarMenuItem key={index} item={item} />
-        ));
-  };
-
-  // useEffect(() => {
-  //   if (userData.tokentoken) {
-  //     const decodedToken: any = decode(token);
-
-  //     if (decodedToken?.exp * 1000 < new Date().getTime()) {
-  //       dispatch(signOut());
-  //     }
-  //   }
-  // }, [token]);
 
   const LayoutSidebar = () => (
     <Sidebar

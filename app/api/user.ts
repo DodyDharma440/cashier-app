@@ -5,5 +5,5 @@ import { IUserResponse, IUserLoginForm } from "@custom-types/user";
 export const signIn = (
   formData: IUserLoginForm
 ): Promise<AxiosResponse<IUserResponse>> => {
-  return apiCashier.post("/users/sign-in", formData);
+  return apiCashier.post("/users/sign-in", formData, { withCredentials: true });
 };

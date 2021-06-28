@@ -39,6 +39,7 @@ export interface IUser {
 export interface IUserResponse {
   users?: IUser[];
   user?: IUser;
+  newUser?: IUser;
   result?: {
     userId: string;
     username: string;
@@ -50,11 +51,13 @@ export interface IUserResponse {
 }
 
 export interface IUserAuthData {
-  result: {
-    userId: string;
-    username: string;
-    name: string;
-    status: UserStatus.admin | UserStatus.kasir;
-  };
+  result:
+    | {
+        userId: string;
+        username: string;
+        name: string;
+        status: UserStatus.admin | UserStatus.kasir;
+      }
+    | any;
   token: string;
 }
