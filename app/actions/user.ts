@@ -1,5 +1,5 @@
 import * as api from "@api/user";
-import { IUserLoginForm } from "@custom-types/user";
+import { IUserLoginForm, IUserFixedForm } from "@custom-types/user";
 import { deleteCookie } from "@utils/cookie";
 
 export const signIn = async (
@@ -23,4 +23,16 @@ export const signOut = (callback?: () => void) => {
   // } catch (error) {
   //   callback && callback(null, error);
   // }
+};
+
+export const addUser = async (
+  formData: IUserFixedForm,
+  callback: (success?: any, error?: any) => void
+) => {
+  try {
+    const { data } = await api.addUser(formData);
+    callback(data);
+  } catch (error) {
+    callback && callback(null, error);
+  }
 };

@@ -6,3 +6,5 @@ export const apiCashier = axios.create({
       ? "https://cashier-app.vercel.app/api"
       : "http://localhost:3000/api",
 });
+
+axios.defaults.withCredentials = true;

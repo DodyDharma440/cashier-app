@@ -6,6 +6,7 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import NProgress from "nprogress";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import "../styles/nprogress.css";
+import "../styles/globals.css";
 import theme from "theme";
 import { UserProvider } from "@context/user";
 

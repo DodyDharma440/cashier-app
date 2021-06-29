@@ -62,3 +62,9 @@ export interface IUserAuthData {
   result: IUserDecodedToken | any;
   token: string;
 }
+
+export interface IUserTable {
+  id: keyof IUser;
+  label: string;
+  numeric: boolean;
+}
