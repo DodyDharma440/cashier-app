@@ -17,12 +17,6 @@ const handler = async (
   switch (method) {
     case "GET":
       try {
-        if (!req.userData) {
-          return res.status(401).json({
-            message: "Anda belum login. Silahkan login terlebih dahulu",
-          });
-        }
-
         const users = await User.find();
 
         res.status(200).json({
@@ -40,12 +34,6 @@ const handler = async (
       const { name, username, status } = formData;
 
       try {
-        if (!req.userData) {
-          return res.status(401).json({
-            message: "Anda belum login. Silahkan login terlebih dahulu",
-          });
-        }
-
         if (req.userData.status !== UserStatus.admin) {
           return res.status(401).json({
             message: "Hanya admin yang boleh menambahkan user.",
@@ -84,7 +72,7 @@ const handler = async (
       break;
 
     default:
-      res.status(400).json({
+      res.status(405).json({
         message: "Method not allowed",
       });
       break;

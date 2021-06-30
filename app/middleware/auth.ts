@@ -33,7 +33,9 @@ export const withAuth = (
 
       return handler(req, res);
     } catch (error) {
-      res.status;
+      res.status(500).json({
+        message: error.message,
+      });
     }
   };
 };

@@ -1,25 +1,24 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "@utils/dbConnect";
-import User from "@models/user";
+import Category from "@models/category";
 import { withAuth } from "@middleware/auth";
-import { IUserFixedForm, IUserResponse } from "@custom-types/user";
+import { ICategoryResponse, ICategoryForm } from "@custom-types/category";
 import { UserStatus } from "@enums/user";
 
 dbConnect();
 
 const handler = async (
   req: NextApiRequest,
-  res: NextApiResponse<IUserResponse>
+  res: NextApiResponse<ICategoryResponse>
 ) => {
   const { method, body, query, userData } = req;
 
   switch (method) {
     case "GET":
       try {
-        const user = await User.findById(query.id);
-
+        const category = await Category.findById(query.id);
         res.status(200).json({
-          user,
+          category,
         });
       } catch (error) {
         res.status(500).json({
@@ -29,42 +28,38 @@ const handler = async (
       break;
 
     case "PUT":
-      const formData: IUserFixedForm = body;
-      const { name, username, status } = formData;
-
       try {
+        const formData: ICategoryForm = body;
+        const { categoryName } = formData;
+
         const isAdmin = userData.status === UserStatus.admin;
 
-        if (!isAdmin && userData._id.toString() !== query.id) {
-          return res.status(400).json({
-            message: "Tidak dapat untuk edit user lain.",
+        if (!isAdmin) {
+          return res.status(401).json({
+            message: "Hanya admin yang boleh memperbarui kategori.",
           });
         }
 
-        const existingUser = await User.findOne({ username });
+        const existingCategory = await Category.findOne({
+          categoryLabel: { $regex: new RegExp(categoryName, "i") },
+        });
 
-        if (existingUser && existingUser._id.toString() !== query.id) {
+        if (existingCategory) {
           res.status(409).json({
-            message: "Username sudah digunakan.",
+            message: "Nama category sudah ada.",
           });
           return;
         }
 
-        const updatedUser = await User.findByIdAndUpdate(
+        const updatedCategory = await Category.findByIdAndUpdate(
           query.id,
-          {
-            username,
-            name,
-            status,
-          },
-          {
-            new: true,
-          }
+          { categoryName },
+          { new: true }
         );
 
         res.status(200).json({
-          updatedUser,
-          message: "Berhasil update data anggota.",
+          updatedCategory,
+          message: "Berhasil update kategori",
         });
       } catch (error) {
         res.status(500).json({
@@ -79,14 +74,14 @@ const handler = async (
 
         if (!isAdmin) {
           return res.status(401).json({
-            message: "Hanya admin yang boleh menghapus user.",
+            message: "Hanya admin yang boleh menghapus kategori.",
           });
         }
 
-        await User.findByIdAndRemove(query.id);
+        await Category.findByIdAndRemove(query.id);
 
         res.status(200).json({
-          message: "Berhasil menghapus user.",
+          message: "Berhasil menghapus kategori.",
         });
       } catch (error) {
         res.status(500).json({
