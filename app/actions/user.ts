@@ -63,7 +63,7 @@ export const deleteUser = async (id: string, callback: () => void) => {
     Swal.fire({
       icon: "success",
       title: "Sukses",
-      text: "Anggota berhasil diperbarui",
+      text: "Anggota berhasil dihapus",
       confirmButtonText: "Tutup",
     });
     callback();

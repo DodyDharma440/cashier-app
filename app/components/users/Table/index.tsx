@@ -1,34 +1,17 @@
 import React from "react";
-import { IUserTable, IUserForm, IUser } from "@custom-types/user";
+import { IUserForm, IUser } from "@custom-types/user";
 import { useRequestSort } from "@hooks/index";
 import { TableRowUser } from "@components/users";
 import { TableData } from "@components/common";
+import { tableHeadUser } from "@constants/tableHead";
 
 type Props = {
-  users?: IUser[];
+  users: IUser[];
   onEditClick: (value: IUserForm, id: string) => void;
   onDelete: (id: string, cb: () => void) => void;
 };
 
-const headCells: IUserTable[] = [
-  {
-    id: "name",
-    numeric: false,
-    label: "Nama",
-  },
-  {
-    id: "username",
-    numeric: false,
-    label: "Username",
-  },
-  {
-    id: "status",
-    numeric: false,
-    label: "Status",
-  },
-];
-
-const UserTable: React.FC<Props> = ({ users, onEditClick, onDelete }) => {
+const Table: React.FC<Props> = ({ users, onEditClick, onDelete }) => {
   const { order, orderBy, onRequestSort } = useRequestSort<keyof IUser>("name");
 
   return (
@@ -43,7 +26,7 @@ const UserTable: React.FC<Props> = ({ users, onEditClick, onDelete }) => {
           onDelete={onDelete}
         />
       )}
-      headCells={headCells}
+      headCells={tableHeadUser}
       order={order}
       orderBy={orderBy}
       onRequestSort={onRequestSort}
@@ -51,4 +34,4 @@ const UserTable: React.FC<Props> = ({ users, onEditClick, onDelete }) => {
   );
 };
 
-export default UserTable;
+export default Table;

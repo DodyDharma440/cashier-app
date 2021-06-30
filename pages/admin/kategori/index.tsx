@@ -4,34 +4,27 @@ import Head from "next/head";
 import { Button } from "@material-ui/core";
 import { HiPlus } from "react-icons/hi";
 import { withAdmin } from "@hoc/index";
-import { getUsers } from "@api/user";
-import { deleteUser } from "@actions/user";
+import { getCategories } from "@api/category";
 import {
   Layout,
   HeaderTitle,
   TableWrapper,
   EmptyData,
 } from "@components/common";
-import { FormUser, TableUser } from "@components/users";
-import { IUser, IUserForm } from "@custom-types/user";
+import { TableCategory, FormCategory } from "@components/categories";
+import { ICategory, ICategoryForm } from "@custom-types/category";
 import { useDisclosure } from "@hooks/index";
+import { deleteCategory } from "@actions/category";
 
 type Props = {
-  users: IUser[];
-  errorMessage: string;
+  categories: ICategory[];
 };
 
-const Anggota: React.FC<Props> = (props) => {
-  const [users, setUsers] = useState<IUser[]>(props.users);
+const Kategori: React.FC<Props> = (props) => {
+  const [categories, setCategories] = useState<ICategory[]>(props.categories);
   const [editId, setEditId] = useState<string>("");
-  const [editValue, setEditValue] = useState<IUserForm | null>(null);
+  const [editValue, setEditValue] = useState<ICategoryForm | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const handleEditClick = (value: IUserForm, id: string) => {
-    onOpen();
-    setEditValue(value);
-    setEditId(id);
-  };
 
   const handleAddClick = () => {
     onOpen();
@@ -39,76 +32,75 @@ const Anggota: React.FC<Props> = (props) => {
     setEditId("");
   };
 
-  const handleDeleteUser = (id: string, cb: () => void) => {
-    deleteUser(id, () => {
-      setUsers(users.filter((user) => user._id !== id));
+  const handleEditClick = (value: ICategoryForm, id: string) => {
+    onOpen();
+    setEditValue(value);
+    setEditId(id);
+  };
+
+  const handleDelete = (id: string, cb: () => void) => {
+    deleteCategory(id, () => {
+      setCategories(categories.filter((category) => category._id !== id));
       cb();
     });
   };
 
-  const handleUpdateUserState = (updatedUser: IUser[]) => {
-    setUsers(updatedUser);
+  const handleUpdateCategoryState = (updatedCategory: ICategory[]) => {
+    setCategories(updatedCategory);
   };
 
   return (
     <>
       <Head>
-        <title>Cashier | Anggota</title>
+        <title>Cashier | Kategori</title>
       </Head>
+
       <Layout>
-        <HeaderTitle title="Daftar Anggota" />
+        <HeaderTitle title="Daftar Kategori" />
         <Button
           startIcon={<HiPlus color="secondary" />}
           onClick={handleAddClick}
           variant="contained"
           color="primary"
         >
-          Tambah Anggota
+          Tambah Kategori
         </Button>
         <TableWrapper>
-          {users.length === 0 ? (
+          {categories.length === 0 ? (
             <EmptyData />
           ) : (
-            <TableUser
-              users={users}
+            <TableCategory
+              categories={categories}
               onEditClick={handleEditClick}
-              onDelete={handleDeleteUser}
+              onDelete={handleDelete}
             />
           )}
         </TableWrapper>
-        <FormUser
+        <FormCategory
           open={isOpen}
           onClose={onClose}
           editValue={editValue}
           editId={editId}
-          onUpdateUserState={handleUpdateUserState}
-          users={users}
+          onUpdateCategoryState={handleUpdateCategoryState}
+          categories={categories}
         />
       </Layout>
     </>
   );
 };
 
-export default withAdmin(Anggota);
+export default withAdmin(Kategori);
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const { data } = await getUsers({
+  const { data } = await getCategories({
     headers: {
       cookie: req.headers.cookie,
     },
   });
 
-  if (!data) {
-    return {
-      props: {
-        errorMessage: "Something went wrong. Please try again.",
-      },
-    };
-  }
-
   return {
     props: {
-      users: data.users,
+      categories: data.categories,
     },
   };
 };

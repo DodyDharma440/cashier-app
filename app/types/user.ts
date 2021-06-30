@@ -1,5 +1,6 @@
 import { Document } from "mongoose";
 import { UserStatus } from "@enums/user";
+import { TableHead } from "@custom-types/table";
 
 export interface IUserModel extends Document {
   name: string;
@@ -63,8 +64,6 @@ export interface IUserAuthData {
   token: string;
 }
 
-export interface IUserTable {
+export interface IUserTable extends TableHead {
   id: keyof IUser;
-  label: string;
-  numeric: boolean;
 }

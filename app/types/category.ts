@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import { TableHead } from "@custom-types/table";
 
 export interface ICategoryModel extends Document {
   categoryName: string;
@@ -22,4 +23,8 @@ export interface ICategoryResponse {
 
 export interface ICategoryForm {
   categoryName: string;
+}
+
+export interface ICategoryTable extends TableHead {
+  id: keyof ICategory;
 }
