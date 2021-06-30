@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import React, { useState, useEffect } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
   Dialog,
@@ -12,7 +12,6 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import Swal from "sweetalert2";
 import {
   IUserForm,
   IUserFixedForm,
@@ -21,7 +20,7 @@ import {
 } from "@custom-types/user";
 import { UserStatus } from "@enums/user";
 import { useProcess } from "@hooks/index";
-import { addUser } from "@actions/user";
+import { addUser, updateUser } from "@actions/user";
 
 type Props = {
   open: boolean;
@@ -40,6 +39,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+const initialInputValue = {
+  name: "",
+  username: "",
+  isAdmin: false,
+};
+
 const Form: React.FC<Props> = ({
   open,
   onClose,
@@ -49,11 +54,7 @@ const Form: React.FC<Props> = ({
   users,
 }) => {
   const classes = useStyles();
-  const [inputValue, setInputValue] = useState<IUserForm>({
-    name: "",
-    username: "",
-    isAdmin: false,
-  });
+  const [inputValue, setInputValue] = useState<IUserForm>(initialInputValue);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { isLoading, startLoading, endLoading } = useProcess();
 
@@ -78,20 +79,19 @@ const Form: React.FC<Props> = ({
 
     if (data) {
       onClose();
-      setInputValue({
-        name: "",
-        username: "",
-        isAdmin: false,
-      });
-      Swal.fire({
-        icon: "success",
-        title: "Sukses",
-        text: "Anggota baru berhasil ditambahkan",
-        confirmButtonText: "Tutup",
-      });
+      setInputValue(initialInputValue);
 
       if (data.newUser) {
         onUpdateUserState([...users, data.newUser]);
+        return;
+      }
+
+      if (data.updatedUser) {
+        const i = users.findIndex(
+          (user: IUser) => user._id === data.updatedUser?._id
+        );
+        users[i] = data.updatedUser;
+        onUpdateUserState([...users]);
       }
     }
 
@@ -109,8 +109,7 @@ const Form: React.FC<Props> = ({
   };
 
   const handleSubmitUpdate = (fixedForm: IUserFixedForm) => {
-    console.log(fixedForm);
-    onClose();
+    updateUser(fixedForm, editId, callbackAction);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -133,11 +132,7 @@ const Form: React.FC<Props> = ({
   useEffect(() => {
     endLoading();
     setErrorMessage(null);
-    setInputValue({
-      name: "",
-      username: "",
-      isAdmin: false,
-    });
+    setInputValue(initialInputValue);
     if (editValue !== null) {
       setInputValue(editValue);
     }

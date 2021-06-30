@@ -7,6 +7,7 @@ import { TableData } from "@components/common";
 type Props = {
   users?: IUser[];
   onEditClick: (value: IUserForm, id: string) => void;
+  onDelete: (id: string, cb: () => void) => void;
 };
 
 const headCells: IUserTable[] = [
@@ -27,7 +28,7 @@ const headCells: IUserTable[] = [
   },
 ];
 
-const UserTable: React.FC<Props> = ({ users, onEditClick }) => {
+const UserTable: React.FC<Props> = ({ users, onEditClick, onDelete }) => {
   const { order, orderBy, onRequestSort } = useRequestSort<keyof IUser>("name");
 
   return (
@@ -39,6 +40,7 @@ const UserTable: React.FC<Props> = ({ users, onEditClick }) => {
           index={index}
           item={user}
           onEditClick={onEditClick}
+          onDelete={onDelete}
         />
       )}
       headCells={headCells}

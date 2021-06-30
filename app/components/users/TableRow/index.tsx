@@ -1,5 +1,6 @@
 import React from "react";
 import { TableCell, TableRow, Box, IconButton } from "@material-ui/core";
+import Swal from "sweetalert2";
 import { IUser, IUserForm } from "@custom-types/user";
 import { UserStatus } from "@enums/user";
 import { HiOutlinePencilAlt, HiOutlineTrash } from "react-icons/hi";
@@ -10,18 +11,31 @@ type Props = {
   item: IUser;
   index: number;
   onEditClick: (value: IUserForm, id: string) => void;
+  onDelete: (id: string, cb: () => void) => void;
 };
 
-const UserTableRow: React.FC<Props> = ({ item, index, onEditClick }) => {
+const UserTableRow: React.FC<Props> = ({
+  item,
+  index,
+  onEditClick,
+  onDelete,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const userData = useUserData();
+  const { name, username, status, _id } = item;
 
-  const handleDeleteUser = (id: string) => {
-    // if (userData?.result._id !== id) {
-    //   dispatch(deleteUser(id));
-    // } else {
-    //   alert("Can't delete your account here");
-    // }
+  const handleDeleteUser = () => {
+    if (userData?.result?.userId !== _id) {
+      onDelete(_id, () => onClose());
+    } else {
+      onClose();
+      Swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: "Tidak bisa menghapus akun Anda disini.",
+        confirmButtonText: "Tutup",
+      });
+    }
   };
 
   return (
@@ -31,13 +45,13 @@ const UserTableRow: React.FC<Props> = ({ item, index, onEditClick }) => {
           {index + 1}
         </TableCell>
         <TableCell component="th" scope="row">
-          {item.name}
+          {name}
         </TableCell>
         <TableCell component="th" scope="row">
-          {item.username}
+          {username}
         </TableCell>
         <TableCell component="th" scope="row">
-          {item.status}
+          {status}
         </TableCell>
         <TableCell style={{ width: 160 }}>
           <Box>
@@ -45,11 +59,11 @@ const UserTableRow: React.FC<Props> = ({ item, index, onEditClick }) => {
               onClick={() =>
                 onEditClick(
                   {
-                    name: item.name,
-                    username: item.username,
-                    isAdmin: item.status === UserStatus.admin ? true : false,
+                    name,
+                    username,
+                    isAdmin: status === UserStatus.admin ? true : false,
                   },
-                  item._id
+                  _id
                 )
               }
             >
@@ -64,9 +78,9 @@ const UserTableRow: React.FC<Props> = ({ item, index, onEditClick }) => {
           title="Hapus Pengguna"
           isOpen={isOpen}
           onClose={onClose}
-          id={item._id}
-          extraInfo={item.name}
-          disabledButton={userData?.result._id === item._id ? true : false}
+          id={_id}
+          extraInfo={name}
+          disabledButton={userData?.result.userId === _id ? true : false}
           deleteAction={handleDeleteUser}
         />
       </TableRow>
