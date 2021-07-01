@@ -48,6 +48,7 @@ const handler = async (
 
         res.status(201).json({
           newProduct,
+          message: "Produk berhasil dibuat",
         });
       } catch (error) {
         res.status(500).json({

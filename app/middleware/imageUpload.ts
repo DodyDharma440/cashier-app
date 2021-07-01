@@ -37,7 +37,11 @@ export const useUploadImage = async (
         });
       }
 
-      req.imageUrl = `http://localhost:3000/api/image/${imageName}`;
+      req.imageUrl = `${
+        process.env.NODE_ENV === "production"
+          ? "https://cashier-app.vercel.app"
+          : "http://localhost:3000"
+      }/api/image/${imageName}`;
     }
 
     //req di return agar dapat diambil di handler
