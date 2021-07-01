@@ -3,7 +3,7 @@ import dbConnect from "@utils/dbConnect";
 import Category from "@models/category";
 import { ICategoryResponse, ICategoryForm } from "@custom-types/category";
 import { withAuth } from "@middleware/auth";
-import { UserStatus } from "@enums/user";
+import { withAdmin } from "@middleware/admin";
 
 dbConnect();
 
@@ -33,12 +33,6 @@ const handler = async (
       const { categoryName } = formData;
 
       try {
-        if (userData.status !== UserStatus.admin) {
-          return res.status(401).json({
-            message: "Hanya admin yang boleh menambahkan kategori.",
-          });
-        }
-
         const existingCategory = await Category.findOne({
           categoryLabel: { $regex: new RegExp(categoryName, "i") },
         });
@@ -72,4 +66,4 @@ const handler = async (
   }
 };
 
-export default withAuth(handler);
+export default withAuth(withAdmin(handler));

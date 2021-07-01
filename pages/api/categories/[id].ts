@@ -2,8 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "@utils/dbConnect";
 import Category from "@models/category";
 import { withAuth } from "@middleware/auth";
+import { withAdmin } from "@middleware/admin";
 import { ICategoryResponse, ICategoryForm } from "@custom-types/category";
-import { UserStatus } from "@enums/user";
 
 dbConnect();
 
@@ -31,14 +31,6 @@ const handler = async (
       try {
         const formData: ICategoryForm = body;
         const { categoryName } = formData;
-
-        const isAdmin = userData.status === UserStatus.admin;
-
-        if (!isAdmin) {
-          return res.status(401).json({
-            message: "Hanya admin yang boleh memperbarui kategori.",
-          });
-        }
 
         const existingCategory = await Category.findOne({
           categoryLabel: { $regex: new RegExp(categoryName, "i") },
@@ -70,14 +62,6 @@ const handler = async (
 
     case "DELETE":
       try {
-        const isAdmin = userData.status === UserStatus.admin;
-
-        if (!isAdmin) {
-          return res.status(401).json({
-            message: "Hanya admin yang boleh menghapus kategori.",
-          });
-        }
-
         await Category.findByIdAndRemove(query.id);
 
         res.status(200).json({
@@ -98,4 +82,4 @@ const handler = async (
   }
 };
 
-export default withAuth(handler);
+export default withAuth(withAdmin(handler));
