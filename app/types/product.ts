@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import { TableHead } from "@custom-types/table";
 
 export interface IProduct extends Document {
   productName: string;
@@ -26,5 +27,10 @@ export interface IProductForm {
   categoryId: string;
   price: string;
   productImage?: any;
+  imageUrl?: string;
   description: string;
+}
+
+export interface IProductTable extends TableHead {
+  id: keyof IProduct;
 }
