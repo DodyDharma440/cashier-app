@@ -43,17 +43,11 @@ const handler = async (
           const arrImgUrl = existingProduct.imageUrl.split("/");
           const imageName = arrImgUrl[arrImgUrl.length - 1];
 
-          unlink(
-            path.join(
-              __dirname,
-              `../../../../../public/assets/images/upload/${imageName}`
-            ),
-            (error) => {
-              if (error) {
-                console.log(error);
-              }
+          unlink(`public/assets/images/upload/${imageName}`, (error) => {
+            if (error) {
+              console.log(error);
             }
-          );
+          });
         }
 
         const updatedProduct = await Product.findByIdAndUpdate(
@@ -90,17 +84,11 @@ const handler = async (
           const arrImgUrl = existingProduct.imageUrl.split("/");
           const imageName = arrImgUrl[arrImgUrl.length - 1];
 
-          unlink(
-            path.join(
-              __dirname,
-              `../../../../../public/assets/images/upload/${imageName}`
-            ),
-            (error) => {
-              if (error) {
-                console.log(error);
-              }
+          unlink(`public/assets/images/upload/${imageName}`, (error) => {
+            if (error) {
+              console.log(error);
             }
-          );
+          });
         }
 
         await Product.findByIdAndRemove(req.query.id);
