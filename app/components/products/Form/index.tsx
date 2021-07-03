@@ -19,9 +19,14 @@ import {
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { HiOutlineUpload, HiRefresh } from "react-icons/hi";
-import { IProductForm } from "@custom-types/product";
+import {
+  IProductForm,
+  IProduct,
+  IProductResponse,
+} from "@custom-types/product";
 import { ICategory } from "@custom-types/category";
 import { useProcess } from "@hooks/index";
+import { addProduct, updateProduct } from "@actions/product";
 
 type Props = {
   open: boolean;
@@ -29,6 +34,8 @@ type Props = {
   editValue: IProductForm | null;
   editId: string;
   categories: ICategory[];
+  products: IProduct[];
+  onUpdateProductState: (updatedProduct: IProduct[]) => void;
 };
 
 type ImgPlaceholderProps = {
@@ -79,6 +86,8 @@ const Form: React.FC<Props> = ({
   editValue,
   editId,
   categories,
+  products,
+  onUpdateProductState,
 }) => {
   const classes = useStyles();
 
@@ -118,11 +127,23 @@ const Form: React.FC<Props> = ({
     return;
   };
 
-  const callbackAction = (success: any, error: any) => {
-    if (success) {
+  const callbackAction = (data: IProductResponse, error: any) => {
+    if (data) {
       onClose();
       setInputValue(initialInputValue);
       setSelectedImg("");
+
+      if (data.newProduct) {
+        onUpdateProductState([...products, data.newProduct]);
+      }
+
+      if (data.updatedProduct) {
+        const i = products.findIndex(
+          (product: IProduct) => product._id === data.updatedProduct?._id
+        );
+        products[i] = data.updatedProduct;
+        onUpdateProductState([...products]);
+      }
     }
 
     if (error) {
@@ -136,9 +157,13 @@ const Form: React.FC<Props> = ({
     endLoading();
   };
 
-  const handleSubmitAdd = () => {};
+  const handleSubmitAdd = () => {
+    addProduct(inputValue, callbackAction);
+  };
 
-  const handleSubmitUpdate = () => {};
+  const handleSubmitUpdate = () => {
+    updateProduct(inputValue, editId, callbackAction);
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

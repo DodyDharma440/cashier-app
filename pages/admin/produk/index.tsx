@@ -16,6 +16,7 @@ import {
 } from "@components/common";
 import { TableProduct, FormProduct } from "@components/products";
 import { useDisclosure } from "@hooks/index";
+import { deleteProduct } from "@actions/product";
 
 type Props = {
   products: IProduct[];
@@ -38,6 +39,17 @@ const Produk: React.FC<Props> = (props) => {
     onOpen();
     setEditValue(value);
     setEditId(id);
+  };
+
+  const handleDelete = (id: string, cb: () => void) => {
+    deleteProduct(id, () => {
+      setProducts(products.filter((product) => product._id !== id));
+      cb();
+    });
+  };
+
+  const handleUpdateProductState = (updatedProduct: IProduct[]) => {
+    setProducts(updatedProduct);
   };
 
   return (
@@ -63,7 +75,7 @@ const Produk: React.FC<Props> = (props) => {
             <TableProduct
               products={products}
               onEditClick={handleEditClick}
-              onDelete={() => {}}
+              onDelete={handleDelete}
             />
           )}
         </TableWrapper>
@@ -73,6 +85,8 @@ const Produk: React.FC<Props> = (props) => {
           editValue={editValue}
           editId={editId}
           categories={props.categories}
+          products={products}
+          onUpdateProductState={handleUpdateProductState}
         />
       </Layout>
     </>
