@@ -30,14 +30,26 @@ const handler = async (
 
     case "POST":
       try {
+        const author = req.userData._id;
         const formData: IOrderForm = req.body;
 
         const { orderName, products } = formData;
-        let totalPrice: any;
 
-        products.forEach((product: any) => {
-          const price = Number(product.price * product.quantity);
+        const exisitingOrder = await Order.findOne({
+          orderName,
+          author,
+        });
 
+        if (exisitingOrder) {
+          return res.status(409).json({
+            message: "Nama pesanan tidak boleh sama.",
+          });
+        }
+
+        let totalPrice: number = 0;
+
+        products.map((product: any) => {
+          const price = Number(product.price) * product.quantity;
           totalPrice += price;
         });
 
@@ -45,6 +57,7 @@ const handler = async (
           orderName,
           products,
           totalPrice,
+          author,
           status: "diproses",
         });
 

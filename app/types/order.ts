@@ -8,6 +8,7 @@ interface IProduct {
   price: string;
   imageUrl: string;
   quantity: string;
+  note: string;
 }
 
 export interface IOrder extends Document {
@@ -15,6 +16,7 @@ export interface IOrder extends Document {
   author: string;
   products: IProduct[];
   totalPrice: number | string;
+  note: string;
   status: OrderStatus;
   createdAt: string;
   updatedAt: string;
@@ -27,9 +29,11 @@ export interface IOrderResponse {
   updatedOrder?: IOrder;
   message?: string;
   totalOrders?: number;
+  test?: any;
 }
 
 export interface IOrderForm {
   orderName: string;
   products: IProduct[];
+  status?: OrderStatus;
 }

@@ -7,6 +7,7 @@ const orderSchema: mongoose.Schema = new mongoose.Schema(
     orderName: {
       type: String,
       required: true,
+      unique: true,
     },
     author: {
       type: String,

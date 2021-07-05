@@ -34,7 +34,7 @@ const handler = async (
 
       try {
         const existingCategory = await Category.findOne({
-          categoryLabel: { $regex: new RegExp(categoryName, "i") },
+          categoryName: { $regex: new RegExp(categoryName, "i") },
         });
 
         if (existingCategory) {
