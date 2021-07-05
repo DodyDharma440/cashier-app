@@ -16,11 +16,32 @@ const handler = async (
   switch (req.method) {
     case "GET":
       try {
-        const products = await Product.find();
+        const { category, search } = req.query;
+
+        let products: any;
+
+        if (Object.keys(req.query).length === 0) {
+          products = await Product.find();
+        } else {
+          //filter category
+          if (category && category !== "all") {
+            products = await Product.find({ categoryName: category });
+          } else {
+            products = await Product.find();
+          }
+
+          //Search by name
+          if (search) {
+            products = await Product.find({
+              productName: { $regex: search, $options: "i" },
+            });
+          }
+        }
 
         res.status(200).json({
           products,
           totalProducts: products.length,
+          test: req.query,
         });
       } catch (error) {
         res.status(500).json({
