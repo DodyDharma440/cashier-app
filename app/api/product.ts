@@ -1,6 +1,6 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { apiCashier } from "@api/config";
-import { IProductForm, IProductResponse } from "@custom-types/product";
+import { IProductResponse } from "@custom-types/product";
 
 export const getProducts = (
   config?: AxiosRequestConfig

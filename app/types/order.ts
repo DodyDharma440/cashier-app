@@ -1,25 +1,25 @@
 import { Document } from "mongoose";
 import { OrderStatus } from "@enums/order";
+import { IProduct } from "@custom-types/product";
 
-interface IProduct {
+export interface IOrderProductForm {
   productId: string;
-  productName: string;
-  categoryName: string;
-  price: string;
-  imageUrl: string;
-  quantity: string;
+  quantity: number;
   note: string;
 }
+
+export interface IOrderProduct extends IProduct, IOrderProductForm {}
 
 export interface IOrder extends Document {
   orderName: string;
   author: string;
-  products: IProduct[];
+  products: IOrderProduct[];
   totalPrice: number | string;
   note: string;
   status: OrderStatus;
   createdAt: string;
   updatedAt: string;
+  _doc?: any;
 }
 
 export interface IOrderResponse {
@@ -34,6 +34,7 @@ export interface IOrderResponse {
 
 export interface IOrderForm {
   orderName: string;
-  products: IProduct[];
+  products: IOrderProductForm[];
   status?: OrderStatus;
+  totalPrice: number;
 }

@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { Button, Grid } from "@material-ui/core";
 import { HiPlus } from "react-icons/hi";
 import { Layout, HeaderTitle } from "@components/common";
 import { OrderItem } from "@components/orders";
+import { getOrders } from "@api/order";
+import { IOrder } from "@custom-types/order";
 
 const dummyPesanan: any = [
   {
@@ -133,6 +137,10 @@ const dummyPesanan: any = [
   },
 ];
 
+type Props = {
+  orders: IOrder[];
+};
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ordersContainer: {
@@ -141,8 +149,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Pesanan = () => {
+const Pesanan: React.FC<Props> = (props) => {
   const classes = useStyles();
+  const router = useRouter();
+  const [orders, setOrders] = useState(props.orders);
+
+  React.useEffect(() => {
+    console.log(orders);
+  }, []);
 
   return (
     <>
@@ -156,17 +170,14 @@ const Pesanan = () => {
           startIcon={<HiPlus color="secondary" />}
           variant="contained"
           color="primary"
+          onClick={() => router.push("/kasir/pesanan/tambah")}
         >
           Buat Pesanan
         </Button>
         <div className={classes.ordersContainer}>
-          {/* <Grid container spacing={2}> */}
-          {dummyPesanan.map((dummy: any, index: number) => (
-            // <Grid key={index} item xs={12} sm={6} lg={4}>
-            <OrderItem item={dummy} key={index} />
-            // </Grid>
+          {orders.map((order, index) => (
+            <OrderItem item={order} key={index} />
           ))}
-          {/* </Grid> */}
         </div>
       </Layout>
     </>
@@ -174,3 +185,17 @@ const Pesanan = () => {
 };
 
 export default Pesanan;
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const { data } = await getOrders({
+    headers: {
+      cookie: req.headers.cookie,
+    },
+  });
+
+  return {
+    props: {
+      orders: data.orders,
+    },
+  };
+};

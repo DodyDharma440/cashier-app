@@ -9,6 +9,7 @@ import {
   Typography,
   Avatar,
   IconButton,
+  Grid,
 } from "@material-ui/core";
 import { currencyFormatter } from "@utils/currency";
 import {
@@ -16,6 +17,7 @@ import {
   HiOutlineTrash,
   HiOutlinePencilAlt,
 } from "react-icons/hi";
+import { dateFormatter } from "@utils/dateTimeFormat";
 
 type Props = {
   item: any;
@@ -32,13 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     cardContent: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
       flex: 1,
-      [theme.breakpoints.down("xs")]: {
-        display: "block",
-      },
+    },
+    gridOrderData: {
+      alignItems: "center",
     },
     success: {
       borderLeft: `4px solid ${theme.palette.success.main}`,
@@ -67,23 +66,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const OrderItem: React.FC<Props> = ({ item }) => {
   const classes = useStyles();
-  const [totalPrice, setTotalPrice] = useState<any>(0);
 
-  const { id, orderName, products, status } = item;
-
-  useEffect(() => {
-    let total = 0;
-
-    products.forEach((product: any) => {
-      const price = Number(product.price * product.quantity);
-
-      total += price;
-    });
-
-    setTotalPrice(total);
-
-    console.log(totalPrice);
-  }, []);
+  const { _id, orderName, products, status, totalPrice, createdAt } = item;
 
   return (
     <Card
@@ -95,20 +79,33 @@ const OrderItem: React.FC<Props> = ({ item }) => {
       elevation={0}
     >
       <CardContent className={classes.cardContent}>
-        <Typography className={classes.title} variant="h6">
-          {orderName}
-        </Typography>
-        <Typography variant="caption">04 Jul 2021</Typography>
-        <div className={classes.orderThumbContainer}>
-          {products.slice(0, 5).map((product: any, index: number) => (
-            <Avatar
-              className={classes.avatar}
-              alt={orderName}
-              src={product.imageUrl}
-            />
-          ))}
-        </div>
-        <Typography>{currencyFormatter(totalPrice)}</Typography>
+        <Grid container className={classes.gridOrderData}>
+          <Grid item xs={12} md={6} lg={3}>
+            <Typography className={classes.title} variant="h6">
+              {orderName}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <Typography variant="caption">
+              {dateFormatter(createdAt)}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <div className={classes.orderThumbContainer}>
+              {products.slice(0, 5).map((product: any) => (
+                <Avatar
+                  key={product.productId}
+                  className={classes.avatar}
+                  alt={orderName}
+                  src={product.imageUrl}
+                />
+              ))}
+            </div>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <Typography>{currencyFormatter(Number(totalPrice))}</Typography>
+          </Grid>
+        </Grid>
       </CardContent>
       <CardActions>
         <IconButton color="secondary">
