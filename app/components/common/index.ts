@@ -8,6 +8,8 @@ import EmptyData from "./EmptyData";
 import ModalDelete from "./ModalDelete";
 import EnhancedTableHead from "./EnhancedTableHead";
 import TableData from "./TableData";
+import SidebarRight from "./SidebarRight";
+import ScrollContainer from "./ScrollContainer";
 
 export {
   AppLoading,
@@ -20,4 +22,6 @@ export {
   ModalDelete,
   EnhancedTableHead,
   TableData,
+  SidebarRight,
+  ScrollContainer,
 };

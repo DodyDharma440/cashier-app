@@ -8,6 +8,18 @@ export const getProducts = (
   return apiCashier.get("/products", config && config);
 };
 
+export const getProductsByCategory = (
+  categoryName: string
+): Promise<AxiosResponse<IProductResponse>> => {
+  return apiCashier.get(`/products?category=${categoryName}`);
+};
+
+export const searchProducts = (
+  value: string
+): Promise<AxiosResponse<IProductResponse>> => {
+  return apiCashier.get(`/products?search=${value}`);
+};
+
 export const getProduct = (
   id: string,
   config?: AxiosRequestConfig

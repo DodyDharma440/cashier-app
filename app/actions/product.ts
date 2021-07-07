@@ -2,6 +2,30 @@ import * as api from "@api/product";
 import { IProductForm } from "@custom-types/product";
 import Swal from "sweetalert2";
 
+export const getProductsByCategory = async (
+  categoryName: string,
+  callback: (success?: any, error?: any) => void
+) => {
+  try {
+    const { data } = await api.getProductsByCategory(categoryName);
+    callback(data.products);
+  } catch (error) {
+    callback(null, error);
+  }
+};
+
+export const searchProducts = async (
+  value: string,
+  callback: (success?: any, error?: any) => void
+) => {
+  try {
+    const { data } = await api.searchProducts(value);
+    callback(data.products);
+  } catch (error) {
+    callback(null, error);
+  }
+};
+
 export const addProduct = async (
   inputValue: IProductForm,
   callback: (success?: any, error?: any) => void

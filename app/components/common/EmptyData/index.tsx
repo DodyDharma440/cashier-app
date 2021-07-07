@@ -3,6 +3,10 @@ import Image from "next/image";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { Paper, Typography } from "@material-ui/core";
 
+type Props = {
+  caption?: string;
+};
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -15,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const EmptyData = () => {
+const EmptyData: React.FC<Props> = ({ caption }) => {
   const classes = useStyles();
 
   return (
@@ -26,7 +30,7 @@ const EmptyData = () => {
         width="400"
         height="400"
       />
-      <Typography>Data masih kosong.</Typography>
+      <Typography>{caption ? caption : "Data masih kosong"}</Typography>
     </Paper>
   );
 };

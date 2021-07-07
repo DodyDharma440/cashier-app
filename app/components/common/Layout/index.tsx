@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { Box, Drawer, AppBar, Toolbar, IconButton } from "@material-ui/core";
+import clsx from "clsx";
 import { HiMenu } from "react-icons/hi";
 import { Sidebar, SidebarMenuItem } from "@components/common";
 import { UserStatus } from "@enums/user";
@@ -10,6 +11,7 @@ import { IMenuItem } from "@custom-types/layout";
 
 type Props = {
   children: React.ReactNode;
+  withSidebarLeft?: boolean;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -25,10 +27,16 @@ const useStyles = makeStyles((theme: Theme) =>
     appBar: {
       backgroundColor: "#fff",
     },
+    withSidebarLeft: {
+      marginRight: 460,
+      [theme.breakpoints.down("md")]: {
+        marginRight: 0,
+      },
+    },
   })
 );
 
-const Layout: React.FC<Props> = ({ children }) => {
+const Layout: React.FC<Props> = ({ children, withSidebarLeft }) => {
   const classes = useStyles();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const userData = useUserData();
@@ -62,7 +70,13 @@ const Layout: React.FC<Props> = ({ children }) => {
       ) : (
         <LayoutSidebar />
       )}
-      <Box className={classes.content}>{children}</Box>
+      <Box
+        className={clsx(classes.content, {
+          [classes.withSidebarLeft]: withSidebarLeft,
+        })}
+      >
+        {children}
+      </Box>
     </Box>
   );
 };
