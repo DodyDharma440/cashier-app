@@ -1,9 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import { Grid } from "@material-ui/core";
-import { Layout, HeaderTitle, SidebarRight } from "@components/common";
+import { Layout, HeaderTitle } from "@components/common";
 import { FormOrder } from "@components/orders";
 import { getCategories } from "@api/category";
 import { ICategory } from "@custom-types/category";
@@ -11,12 +9,6 @@ import { ICategory } from "@custom-types/category";
 type Props = {
   categories: ICategory[];
 };
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    gridContainer: {},
-  })
-);
 
 const BuatPesanan: React.FC<Props> = ({ categories }) => {
   return (

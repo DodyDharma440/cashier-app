@@ -11,11 +11,12 @@ import {
   Typography,
 } from "@material-ui/core";
 import { HiPlus } from "react-icons/hi";
-import { IProduct } from "@custom-types/product";
+import { IProduct, IProductCart } from "@custom-types/product";
 import { currencyFormatter } from "@utils/currency";
 
 type Props = {
   product: IProduct;
+  onAddCart: (product: IProductCart) => void;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -54,9 +55,17 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const CardProduct: React.FC<Props> = ({ product }) => {
+const CardProduct: React.FC<Props> = ({ product, onAddCart }) => {
   const classes = useStyles();
   const { productName, imageUrl, price } = product;
+
+  const handleAddCart = () => {
+    onAddCart({
+      ...product,
+      note: "",
+      quantity: 1,
+    });
+  };
 
   return (
     <Card className={classes.root} elevation={0}>
@@ -81,8 +90,9 @@ const CardProduct: React.FC<Props> = ({ product }) => {
           color="primary"
           variant="contained"
           startIcon={<HiPlus size={20} />}
+          onClick={handleAddCart}
         >
-          Add to list
+          Tambah ke list
         </Button>
       </CardActions>
     </Card>

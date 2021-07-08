@@ -5,7 +5,7 @@ import { Button, Typography, TextField, Grid } from "@material-ui/core";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { EmptyData } from "@components/common";
 import { CardProduct } from "@components/products";
-import { IProduct } from "@custom-types/product";
+import { IProduct, IProductCart } from "@custom-types/product";
 import { ICategory } from "@custom-types/category";
 import { ScrollContainer } from "@components/common";
 import { getProductsByCategory } from "@actions/product";
@@ -14,6 +14,7 @@ import { searchProducts } from "@actions/product";
 
 type Props = {
   categories: ICategory[];
+  onAddCart: (product: IProductCart) => void;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -62,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Menu: React.FC<Props> = ({ categories }) => {
+const Menu: React.FC<Props> = ({ categories, onAddCart }) => {
   const classes = useStyles();
   const [currentCategory, setCurrentCategory] = useState<string>(
     categories[0].categoryName
@@ -99,6 +100,7 @@ const Menu: React.FC<Props> = ({ categories }) => {
 
     startLoading();
     setCurrentCategory("");
+    setErrorMessage(null);
     setSearchValue(value);
 
     if (value === "") {
@@ -123,6 +125,7 @@ const Menu: React.FC<Props> = ({ categories }) => {
   };
 
   useEffect(() => {
+    startLoading();
     handleGetProducts(currentCategory);
   }, []);
 
@@ -171,7 +174,7 @@ const Menu: React.FC<Props> = ({ categories }) => {
           <Grid container spacing={2}>
             {products.map((product) => (
               <Grid item key={product._id} xs={12} sm={6} lg={4}>
-                <CardProduct product={product} />
+                <CardProduct product={product} onAddCart={onAddCart} />
               </Grid>
             ))}
           </Grid>

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IProduct } from "@custom-types/product";
+import { IProductModel } from "@custom-types/product";
 
 const productSchema: mongoose.Schema = new mongoose.Schema(
   {
@@ -32,4 +32,4 @@ const productSchema: mongoose.Schema = new mongoose.Schema(
 );
 
 export default mongoose.models.Product ||
-  mongoose.model<IProduct>("Product", productSchema);
+  mongoose.model<IProductModel>("Product", productSchema);

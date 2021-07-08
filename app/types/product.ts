@@ -1,7 +1,17 @@
 import { Document } from "mongoose";
 import { TableHead } from "@custom-types/table";
 
-export interface IProduct extends Document {
+export interface IProductModel extends Document {
+  productName: string;
+  categoryId: string;
+  categoryName: string;
+  price: string;
+  imageUrl: string;
+  description: string;
+}
+
+export interface IProduct {
+  _id: string;
   productName: string;
   categoryId: string;
   categoryName: string;
@@ -10,6 +20,7 @@ export interface IProduct extends Document {
   description: string;
   createdAt: string;
   updatedAt: string;
+  __v: number;
 }
 
 export interface IProductResponse {
@@ -33,4 +44,9 @@ export interface IProductForm {
 
 export interface IProductTable extends TableHead {
   id: keyof IProduct;
+}
+
+export interface IProductCart extends IProduct {
+  quantity: number;
+  note: string;
 }

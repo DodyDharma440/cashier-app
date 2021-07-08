@@ -11,6 +11,7 @@ type Props = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      height: "100%",
       "&::-webkit-scrollbar": {
         width: 8,
         height: 8,
@@ -31,7 +32,9 @@ const useStyles = makeStyles((theme: Theme) =>
         borderRadius: "4px",
       },
     },
-    verticalScroll: {},
+    verticalScroll: {
+      overflowY: "auto",
+    },
     horizontalScroll: {
       overflow: "auto",
       whiteSpace: "nowrap",
