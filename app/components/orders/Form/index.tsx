@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import { TextField } from "@material-ui/core";
+import { TextField, Typography, Button } from "@material-ui/core";
 import { IOrderForm, IOrderProductForm } from "@custom-types/order";
 import { OrderStatus } from "@enums/order";
 import { SidebarRight, HeaderTitle, ScrollContainer } from "@components/common";
+import { ItemCart } from "@components/products";
 import { MenuOrder } from "@components/orders";
 import { ICategory } from "@custom-types/category";
 import { IProductCart, IProduct } from "@custom-types/product";
@@ -16,11 +17,23 @@ type Props = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     sidebarContent: {
-      padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
+      padding: `${theme.spacing(2)}px 0px`,
+    },
+    sidebarItem: {
+      padding: `0px ${theme.spacing(4)}px`,
       [theme.breakpoints.down("md")]: {
         paddingLeft: 0,
         paddingRight: 0,
       },
+    },
+    subTotal: {
+      textAlign: "right",
+      marginBottom: theme.spacing(1),
+      marginTop: theme.spacing(2),
+    },
+    placeholder: {
+      textAlign: "center",
+      opacity: 0.6,
     },
   })
 );
@@ -51,7 +64,7 @@ const Form: React.FC<Props> = ({ categories }) => {
       (product) => product.productId === name
     );
 
-    if (filteredCart.length && filteredProducts.length === 1) {
+    if (filteredCart.length === 1 && filteredProducts.length === 1) {
       const iCart = cart.findIndex((product) => product._id === name);
       const iProducts = products.findIndex(
         (product) => product.productId === name
@@ -222,59 +235,55 @@ const Form: React.FC<Props> = ({ categories }) => {
       />
       <MenuOrder categories={categories} onAddCart={handleAddCart} />
       <SidebarRight>
-        <ScrollContainer vertical>
-          <div className={classes.sidebarContent}>
+        <div className={classes.sidebarContent}>
+          <div className={classes.sidebarItem}>
             <HeaderTitle title="Keranjang" />
-            {cart.length === 0 ? (
-              <p>Keranjang masih kosong</p>
-            ) : (
-              <>
-                {cart.map((product) => (
-                  <React.Fragment key={product._id}>
-                    <p>{product.productName}</p>
-                    <p>{currencyFormatter(Number(product.price))}</p>
-                    <button
-                      type="button"
-                      onClick={() => handleDecreaseQty(product._id)}
-                    >
-                      -
-                    </button>
-                    <span style={{ margin: "0px 8px" }}>
-                      {product.quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleIncreaseQty(product._id)}
-                    >
-                      +
-                    </button>
-                    <div style={{ margin: "8px 0px" }}>
-                      <input
-                        name={product._id}
-                        onChange={handleChangeNote}
-                        value={product.note}
-                      />
-                    </div>
-                    <div style={{ margin: "8px 0px" }}>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveCart(product._id)}
-                      >
-                        Hapus
-                      </button>
-                    </div>
-                    <hr />
-                  </React.Fragment>
-                ))}
-                <p>
-                  Total Semua :{" "}
-                  {currencyFormatter(Number(formValue.totalPrice))}
-                </p>
-                <button type="submit">Simpan</button>
-              </>
-            )}
           </div>
-        </ScrollContainer>
+          <ScrollContainer vertical>
+            <div className={classes.sidebarItem} style={{ height: "72vh" }}>
+              {cart.length === 0 ? (
+                <Typography className={classes.placeholder}>
+                  Keranjang masih kosong
+                </Typography>
+              ) : (
+                <>
+                  {cart.map((product) => (
+                    <ItemCart
+                      key={product._id}
+                      item={product}
+                      onChangeNote={handleChangeNote}
+                      onIncreaseQty={handleIncreaseQty}
+                      onDecreaseQty={handleDecreaseQty}
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+          </ScrollContainer>
+          {cart.length > 0 && (
+            <div className={classes.sidebarItem}>
+              <Typography variant="body1" className={classes.subTotal}>
+                Subtotal :{" "}
+                <Typography
+                  variant="body1"
+                  component="span"
+                  color="primary"
+                  style={{ fontWeight: "bold" }}
+                >
+                  {currencyFormatter(Number(formValue.totalPrice))}
+                </Typography>
+              </Typography>
+              <Button
+                type="submit"
+                fullWidth
+                color="primary"
+                variant="contained"
+              >
+                Simpan
+              </Button>
+            </div>
+          )}
+        </div>
       </SidebarRight>
     </form>
   );

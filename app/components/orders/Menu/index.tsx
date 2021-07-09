@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { Button, Typography, TextField, Grid } from "@material-ui/core";
-import { Alert, AlertTitle } from "@material-ui/lab";
+import { Alert, AlertTitle, Skeleton } from "@material-ui/lab";
 import { EmptyData } from "@components/common";
-import { CardProduct } from "@components/products";
+import { CardProduct, CardSkeleton } from "@components/products";
 import { IProduct, IProductCart } from "@custom-types/product";
 import { ICategory } from "@custom-types/category";
 import { ScrollContainer } from "@components/common";
@@ -162,7 +162,13 @@ const Menu: React.FC<Props> = ({ categories, onAddCart }) => {
       </ScrollContainer>
       <div className={classes.productsContainer}>
         {isLoading ? (
-          "Loading..."
+          <Grid container spacing={2}>
+            {[1, 2, 3, 4, 5].map((index) => (
+              <Grid item key={index} xs={12} sm={6} lg={4}>
+                <CardSkeleton />
+              </Grid>
+            ))}
+          </Grid>
         ) : products.length === 0 && !isLoading ? (
           <EmptyData caption={emptyMessage} />
         ) : errorMessage ? (

@@ -28,6 +28,15 @@ const BuatPesanan: React.FC<Props> = ({ categories }) => {
 export default BuatPesanan;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  if (!req.headers.cookie && !req.cookies.auth_token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const categoriesRes = await getCategories({
     headers: {
       cookie: req.headers.cookie,
