@@ -1,6 +1,7 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { apiCashier } from "@api/config";
 import { IOrderForm, IOrderResponse } from "@custom-types/order";
+import { OrderStatus } from "@enums/order";
 
 export const getOrders = (
   config?: AxiosRequestConfig
@@ -18,4 +19,11 @@ export const deleteOrder = (
   id: string
 ): Promise<AxiosResponse<IOrderResponse>> => {
   return apiCashier.delete(`/orders/${id}`);
+};
+
+export const updateOrderStatus = (
+  status: OrderStatus,
+  id: string
+): Promise<AxiosResponse<IOrderResponse>> => {
+  return apiCashier.put(`orders/update-status/${id}`, { status });
 };

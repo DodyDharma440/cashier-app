@@ -31,9 +31,8 @@ import { useProcess } from "@hooks/index";
 
 type Props = {
   item: IOrder;
-  orders: IOrder[];
-  onUpdateOrderState: (value: IOrder[]) => void;
   onDelete: (id: string, cb: () => void) => void;
+  onUpdateStatus: (status: OrderStatus, id: string, cb: () => void) => void;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -91,12 +90,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const OrderItem: React.FC<Props> = ({
-  item,
-  orders,
-  onUpdateOrderState,
-  onDelete,
-}) => {
+const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
   const theme = useTheme();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -118,6 +112,48 @@ const OrderItem: React.FC<Props> = ({
       if (result.isConfirmed) {
         startLoading();
         onDelete(_id, () => {
+          endLoading();
+        });
+      }
+    });
+  };
+
+  const handleStatusCancel = () => {
+    handleCloseMenu();
+    Swal.fire({
+      icon: "question",
+      confirmButtonText: "Yakin",
+      confirmButtonColor: theme.palette.primary.main,
+      showCancelButton: true,
+      cancelButtonText: "Batal",
+      cancelButtonColor: theme.palette.secondary.main,
+      title: "Batalkan Pesanan",
+      text: `Yakin untuk membatalkan pesanan ${orderName}?`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        startLoading();
+        onUpdateStatus(OrderStatus.dibatalkan, _id, () => {
+          endLoading();
+        });
+      }
+    });
+  };
+
+  const handleStatusDone = () => {
+    handleCloseMenu();
+    Swal.fire({
+      icon: "question",
+      confirmButtonText: "Yakin",
+      confirmButtonColor: theme.palette.primary.main,
+      showCancelButton: true,
+      cancelButtonText: "Batal",
+      cancelButtonColor: theme.palette.secondary.main,
+      title: "Selesaikan Pesanan",
+      text: `Yakin untuk menyelesaikan pesanan ${orderName}?`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        startLoading();
+        onUpdateStatus(OrderStatus.selesai, _id, () => {
           endLoading();
         });
       }
@@ -200,7 +236,7 @@ const OrderItem: React.FC<Props> = ({
           </MenuItem>
         )}
         {status === OrderStatus.diproses && (
-          <MenuItem>
+          <MenuItem onClick={handleStatusDone}>
             <ListItemIcon>
               <HiCheck size={25} />
             </ListItemIcon>
@@ -208,7 +244,7 @@ const OrderItem: React.FC<Props> = ({
           </MenuItem>
         )}
         {status === OrderStatus.diproses && (
-          <MenuItem>
+          <MenuItem onClick={handleStatusCancel}>
             <ListItemIcon>
               <HiX size={25} />
             </ListItemIcon>

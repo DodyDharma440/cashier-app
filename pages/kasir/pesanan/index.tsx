@@ -5,12 +5,12 @@ import { useRouter } from "next/router";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { Button, Grid, useTheme } from "@material-ui/core";
 import { HiPlus } from "react-icons/hi";
-import Swal from "sweetalert2";
 import { Layout, HeaderTitle } from "@components/common";
 import { ItemOrder } from "@components/orders";
 import { getOrders } from "@api/order";
 import { IOrder } from "@custom-types/order";
-import { deleteOrder } from "@actions/order";
+import { OrderStatus } from "@enums/order";
+import { deleteOrder, updateOrderStatus } from "@actions/order";
 
 type Props = {
   orders: IOrder[];
@@ -35,26 +35,25 @@ const Pesanan: React.FC<Props> = (props) => {
   };
 
   const handleDelete = (id: string, cb: () => void) => {
-    deleteOrder(id, (data: any, error: any) => {
+    deleteOrder(id, theme, (data: any, error: any) => {
       if (data) {
-        Swal.fire({
-          icon: "success",
-          confirmButtonText: "Tutup",
-          cancelButtonColor: theme.palette.secondary.main,
-          title: "Berhasil",
-          text: "Pesanan berhasil dihapus.",
-        });
         setOrders(orders.filter((order) => order._id !== id));
       }
 
-      if (error) {
-        Swal.fire({
-          icon: "error",
-          confirmButtonText: "Tutup",
-          cancelButtonColor: theme.palette.secondary.main,
-          title: "Gagal",
-          text: error.response.data.message || error.message,
-        });
+      cb();
+    });
+  };
+
+  const handleUpdateStatus = (
+    status: OrderStatus,
+    id: string,
+    cb: () => void
+  ) => {
+    updateOrderStatus(status, id, theme, (data: any, error: any) => {
+      if (data) {
+        const i = orders.findIndex((order) => order._id === id);
+        orders[i].status = status;
+        setOrders([...orders]);
       }
 
       cb();
@@ -83,9 +82,8 @@ const Pesanan: React.FC<Props> = (props) => {
               <Grid item xs={12} lg={6} key={order._id}>
                 <ItemOrder
                   item={order}
-                  orders={orders}
-                  onUpdateOrderState={handleUpdateOrderState}
                   onDelete={handleDelete}
+                  onUpdateStatus={handleUpdateStatus}
                 />
               </Grid>
             ))}
