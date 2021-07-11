@@ -10,6 +10,7 @@ import EnhancedTableHead from "./EnhancedTableHead";
 import TableData from "./TableData";
 import SidebarRight from "./SidebarRight";
 import ScrollContainer from "./ScrollContainer";
+import LoadingDialog from "./LoadingDialog";
 
 export {
   AppLoading,
@@ -24,4 +25,5 @@ export {
   TableData,
   SidebarRight,
   ScrollContainer,
+  LoadingDialog,
 };

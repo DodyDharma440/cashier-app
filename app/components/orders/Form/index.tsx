@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import { TextField, Typography, Button } from "@material-ui/core";
-import { IOrderForm, IOrderProductForm } from "@custom-types/order";
+import {
+  TextField,
+  Typography,
+  Button,
+  CircularProgress,
+} from "@material-ui/core";
+import { IOrderForm, IOrder, IOrderProductForm } from "@custom-types/order";
 import { OrderStatus } from "@enums/order";
 import { SidebarRight, HeaderTitle, ScrollContainer } from "@components/common";
 import { ItemCart } from "@components/products";
@@ -9,6 +15,8 @@ import { MenuOrder } from "@components/orders";
 import { ICategory } from "@custom-types/category";
 import { IProductCart, IProduct } from "@custom-types/product";
 import { currencyFormatter } from "@utils/currency";
+import { addOrder } from "@actions/order";
+import { useProcess } from "@hooks/index";
 
 type Props = {
   categories: ICategory[];
@@ -40,6 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Form: React.FC<Props> = ({ categories }) => {
   const classes = useStyles();
+  const router = useRouter();
 
   const [formValue, setFormValue] = useState<IOrderForm>({
     orderName: "",
@@ -49,6 +58,8 @@ const Form: React.FC<Props> = ({ categories }) => {
   });
 
   const [cart, setCart] = useState<IProductCart[]>([]);
+
+  const { startLoading, endLoading, isLoading } = useProcess();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue({ ...formValue, orderName: e.target.value });
@@ -194,8 +205,18 @@ const Form: React.FC<Props> = ({ categories }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    startLoading();
 
-    console.log("formValue => ", formValue);
+    addOrder(formValue, (data: IOrder, error: any) => {
+      endLoading();
+      if (data) {
+        router.push("/kasir/pesanan");
+      }
+
+      if (error) {
+        alert(error.message);
+      }
+    });
   };
 
   useEffect(() => {
@@ -278,6 +299,9 @@ const Form: React.FC<Props> = ({ categories }) => {
                 fullWidth
                 color="primary"
                 variant="contained"
+                endIcon={
+                  isLoading && <CircularProgress color="secondary" size={15} />
+                }
               >
                 Simpan
               </Button>

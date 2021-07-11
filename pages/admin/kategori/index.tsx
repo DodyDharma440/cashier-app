@@ -92,6 +92,15 @@ const Kategori: React.FC<Props> = (props) => {
 export default withAdmin(Kategori);
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  if (!req.headers.cookie && !req.cookies.auth_token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const { data } = await getCategories({
     headers: {
       cookie: req.headers.cookie,

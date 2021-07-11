@@ -96,6 +96,15 @@ const Produk: React.FC<Props> = (props) => {
 export default withAdmin(Produk);
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  if (!req.headers.cookie && !req.cookies.auth_token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const config = {
     headers: {
       cookie: req.headers.cookie,

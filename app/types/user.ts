@@ -32,8 +32,8 @@ export interface IUser {
   username: string;
   password: string;
   status: UserStatus.admin | UserStatus.kasir;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   __v: number;
 }
 

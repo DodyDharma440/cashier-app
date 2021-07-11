@@ -17,8 +17,8 @@ export interface IOrder extends Document {
   totalPrice: number | string;
   note: string;
   status: OrderStatus;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   _doc?: any;
 }
 

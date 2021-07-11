@@ -8,8 +8,8 @@ export interface ICategoryModel extends Document {
 export interface ICategory {
   _id: string;
   categoryName: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   __v: number;
 }
 

@@ -18,8 +18,8 @@ export interface IProduct {
   price: string;
   imageUrl: string;
   description: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   __v: number;
 }
 

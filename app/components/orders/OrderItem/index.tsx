@@ -1,26 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
   Typography,
   Avatar,
-  IconButton,
+  Paper,
+  ListItemIcon,
+  ListItemText,
   Grid,
+  Chip,
+  Menu,
+  MenuItem,
+  useTheme,
 } from "@material-ui/core";
-import { currencyFormatter } from "@utils/currency";
+import { AvatarGroup } from "@material-ui/lab";
 import {
   HiOutlineEye,
   HiOutlineTrash,
   HiOutlinePencilAlt,
+  HiCheck,
+  HiX,
 } from "react-icons/hi";
+import Swal from "sweetalert2";
+import { LoadingDialog } from "@components/common";
+import { IOrder } from "@custom-types/order";
+import { currencyFormatter } from "@utils/currency";
+import { OrderStatus } from "@enums/order";
 import { dateFormatter } from "@utils/dateTimeFormat";
+import { useProcess } from "@hooks/index";
 
 type Props = {
-  item: any;
+  item: IOrder;
+  orders: IOrder[];
+  onUpdateOrderState: (value: IOrder[]) => void;
+  onDelete: (id: string, cb: () => void) => void;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -28,28 +41,39 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       boxShadow: "0px 2px 5px #00000057",
       marginBottom: theme.spacing(2),
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
       display: "flex",
+      padding: `${theme.spacing(1)}px ${theme.spacing(4)}px`,
+      borderRadius: theme.spacing(2),
+      transition: "all 0.3s",
       [theme.breakpoints.down("sm")]: {
         display: "block",
       },
-    },
-    cardContent: {
-      flex: 1,
+      "&:active": {
+        transform: "scale(0.9)",
+      },
     },
     gridOrderData: {
       alignItems: "center",
     },
     success: {
-      borderLeft: `4px solid ${theme.palette.success.main}`,
+      border: `1px solid ${theme.palette.success.main}`,
+      backgroundColor: theme.palette.success.light,
     },
     warning: {
-      borderLeft: `4px solid ${theme.palette.warning.main}`,
+      border: `1px solid ${theme.palette.warning.main}`,
+      backgroundColor: theme.palette.warning.light,
     },
     error: {
-      borderLeft: `4px solid ${theme.palette.error.main}`,
+      border: `1px solid ${theme.palette.error.main}`,
+      backgroundColor: theme.palette.error.light,
     },
     title: {
       fontWeight: 600,
+    },
+    date: {
+      opacity: 0.7,
     },
     orderThumbContainer: {
       display: "flex",
@@ -57,68 +81,143 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: `${theme.spacing(2)}px 0px`,
     },
     avatar: {
-      width: theme.spacing(3),
-      height: theme.spacing(3),
-      marginRight: theme.spacing(1),
+      width: theme.spacing(5),
+      height: theme.spacing(5),
+    },
+    chip: {
+      borderRadius: theme.spacing(1),
+      textTransform: "capitalize",
     },
   })
 );
 
-const OrderItem: React.FC<Props> = ({ item }) => {
+const OrderItem: React.FC<Props> = ({
+  item,
+  orders,
+  onUpdateOrderState,
+  onDelete,
+}) => {
+  const theme = useTheme();
   const classes = useStyles();
-
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { _id, orderName, products, status, totalPrice, createdAt } = item;
+  const { isLoading, startLoading, endLoading } = useProcess();
+
+  const handleDeleteOrder = () => {
+    handleCloseMenu();
+    Swal.fire({
+      icon: "question",
+      confirmButtonText: "Hapus",
+      confirmButtonColor: theme.palette.primary.main,
+      showCancelButton: true,
+      cancelButtonText: "Batal",
+      cancelButtonColor: theme.palette.secondary.main,
+      title: "Hapus Pesanan",
+      text: `Apakah anda yakin untuk menghapus pesanan ${orderName}?`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        startLoading();
+        onDelete(_id, () => {
+          endLoading();
+        });
+      }
+    });
+  };
+
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <Card
-      className={clsx(classes.root, {
-        [classes.success]: status === "selesai",
-        [classes.warning]: status === "diproses",
-        [classes.error]: status === "dibatalkan",
-      })}
-      elevation={0}
-    >
-      <CardContent className={classes.cardContent}>
+    <>
+      <Paper className={classes.root} elevation={0} onClick={handleOpenMenu}>
         <Grid container className={classes.gridOrderData}>
-          <Grid item xs={12} md={6} lg={3}>
-            <Typography className={classes.title} variant="h6">
+          <Grid item xs={6} sm={3}>
+            <Typography className={classes.title} variant="h6" noWrap>
               {orderName}
             </Typography>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <Typography variant="caption">
+            <Typography className={classes.date} variant="caption">
               {dateFormatter(createdAt)}
             </Typography>
           </Grid>
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid item xs={6} sm={3}>
             <div className={classes.orderThumbContainer}>
-              {products.slice(0, 5).map((product: any) => (
-                <Avatar
-                  key={product.productId}
-                  className={classes.avatar}
-                  alt={orderName}
-                  src={product.imageUrl}
-                />
-              ))}
+              <AvatarGroup max={3}>
+                {products.slice(0, 3).map((product: any) => (
+                  <Avatar
+                    key={product._id}
+                    className={classes.avatar}
+                    alt={orderName}
+                    src={product.imageUrl}
+                  />
+                ))}
+              </AvatarGroup>
             </div>
           </Grid>
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid item xs={6} sm={3} style={{ textAlign: "center" }}>
             <Typography>{currencyFormatter(Number(totalPrice))}</Typography>
           </Grid>
+          <Grid item xs={6} sm={3} style={{ textAlign: "end" }}>
+            <Chip
+              className={clsx(classes.chip, {
+                [classes.success]: status === "selesai",
+                [classes.warning]: status === "diproses",
+                [classes.error]: status === "dibatalkan",
+              })}
+              label={status}
+            />
+          </Grid>
         </Grid>
-      </CardContent>
-      <CardActions>
-        <IconButton color="secondary">
-          <HiOutlineEye />
-        </IconButton>
-        <IconButton color="secondary">
-          <HiOutlineTrash />
-        </IconButton>
-        <IconButton color="secondary">
-          <HiOutlinePencilAlt />
-        </IconButton>
-      </CardActions>
-    </Card>
+      </Paper>
+      <Menu
+        keepMounted
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+      >
+        <MenuItem>
+          <ListItemIcon>
+            <HiOutlineEye size={25} />
+          </ListItemIcon>
+          <ListItemText>Detail Pesanan</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleDeleteOrder}>
+          <ListItemIcon>
+            <HiOutlineTrash size={25} />
+          </ListItemIcon>
+          <ListItemText>Hapus Pesanan</ListItemText>
+        </MenuItem>
+        {status === OrderStatus.diproses && (
+          <MenuItem>
+            <ListItemIcon>
+              <HiOutlinePencilAlt size={25} />
+            </ListItemIcon>
+            <ListItemText>Edit Pesanan</ListItemText>
+          </MenuItem>
+        )}
+        {status === OrderStatus.diproses && (
+          <MenuItem>
+            <ListItemIcon>
+              <HiCheck size={25} />
+            </ListItemIcon>
+            <ListItemText>Tandai Selesai</ListItemText>
+          </MenuItem>
+        )}
+        {status === OrderStatus.diproses && (
+          <MenuItem>
+            <ListItemIcon>
+              <HiX size={25} />
+            </ListItemIcon>
+            <ListItemText>Batalkan Pesanan</ListItemText>
+          </MenuItem>
+        )}
+      </Menu>
+      {isLoading && <LoadingDialog />}
+    </>
   );
 };
 
