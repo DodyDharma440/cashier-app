@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { Button, Grid, useTheme } from "@material-ui/core";
 import { HiPlus } from "react-icons/hi";
-import { Layout, HeaderTitle } from "@components/common";
+import { Layout, HeaderTitle, EmptyData } from "@components/common";
 import { ItemOrder } from "@components/orders";
 import { getOrders } from "@api/order";
 import { IOrder } from "@custom-types/order";
@@ -29,10 +29,6 @@ const Pesanan: React.FC<Props> = (props) => {
   const classes = useStyles();
   const router = useRouter();
   const [orders, setOrders] = useState<IOrder[]>(props.orders);
-
-  const handleUpdateOrderState = (updatedOrder: IOrder[]) => {
-    setOrders(updatedOrder);
-  };
 
   const handleDelete = (id: string, cb: () => void) => {
     deleteOrder(id, theme, (data: any, error: any) => {
@@ -77,17 +73,21 @@ const Pesanan: React.FC<Props> = (props) => {
           Buat Pesanan
         </Button>
         <div className={classes.ordersContainer}>
-          <Grid container>
-            {orders.map((order) => (
-              <Grid item xs={12} lg={6} key={order._id}>
-                <ItemOrder
-                  item={order}
-                  onDelete={handleDelete}
-                  onUpdateStatus={handleUpdateStatus}
-                />
-              </Grid>
-            ))}
-          </Grid>
+          {orders.length === 0 ? (
+            <EmptyData />
+          ) : (
+            <Grid container>
+              {orders.map((order) => (
+                <Grid item xs={12} lg={6} key={order._id}>
+                  <ItemOrder
+                    item={order}
+                    onDelete={handleDelete}
+                    onUpdateStatus={handleUpdateStatus}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </div>
       </Layout>
     </>

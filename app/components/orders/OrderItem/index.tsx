@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import clsx from "clsx";
+import { useRouter } from "next/router";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import {
   Typography,
@@ -22,17 +22,17 @@ import {
   HiX,
 } from "react-icons/hi";
 import Swal from "sweetalert2";
-import { LoadingDialog } from "@components/common";
+import { LoadingDialog, OrderStatus } from "@components/common";
 import { IOrder } from "@custom-types/order";
 import { currencyFormatter } from "@utils/currency";
-import { OrderStatus } from "@enums/order";
+import { OrderStatus as OrderStatusEnum } from "@enums/order";
 import { dateFormatter } from "@utils/dateTimeFormat";
 import { useProcess } from "@hooks/index";
 
 type Props = {
   item: IOrder;
   onDelete: (id: string, cb: () => void) => void;
-  onUpdateStatus: (status: OrderStatus, id: string, cb: () => void) => void;
+  onUpdateStatus: (status: OrderStatusEnum, id: string, cb: () => void) => void;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -56,18 +56,6 @@ const useStyles = makeStyles((theme: Theme) =>
     gridOrderData: {
       alignItems: "center",
     },
-    success: {
-      border: `1px solid ${theme.palette.success.main}`,
-      backgroundColor: theme.palette.success.light,
-    },
-    warning: {
-      border: `1px solid ${theme.palette.warning.main}`,
-      backgroundColor: theme.palette.warning.light,
-    },
-    error: {
-      border: `1px solid ${theme.palette.error.main}`,
-      backgroundColor: theme.palette.error.light,
-    },
     title: {
       fontWeight: 600,
     },
@@ -83,14 +71,11 @@ const useStyles = makeStyles((theme: Theme) =>
       width: theme.spacing(5),
       height: theme.spacing(5),
     },
-    chip: {
-      borderRadius: theme.spacing(1),
-      textTransform: "capitalize",
-    },
   })
 );
 
 const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
+  const router = useRouter();
   const theme = useTheme();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -132,7 +117,7 @@ const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         startLoading();
-        onUpdateStatus(OrderStatus.dibatalkan, _id, () => {
+        onUpdateStatus(OrderStatusEnum.dibatalkan, _id, () => {
           endLoading();
         });
       }
@@ -153,7 +138,7 @@ const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         startLoading();
-        onUpdateStatus(OrderStatus.selesai, _id, () => {
+        onUpdateStatus(OrderStatusEnum.selesai, _id, () => {
           endLoading();
         });
       }
@@ -198,14 +183,7 @@ const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
             <Typography>{currencyFormatter(Number(totalPrice))}</Typography>
           </Grid>
           <Grid item xs={6} sm={3} style={{ textAlign: "end" }}>
-            <Chip
-              className={clsx(classes.chip, {
-                [classes.success]: status === "selesai",
-                [classes.warning]: status === "diproses",
-                [classes.error]: status === "dibatalkan",
-              })}
-              label={status}
-            />
+            <OrderStatus status={status} />
           </Grid>
         </Grid>
       </Paper>
@@ -215,7 +193,7 @@ const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
-        <MenuItem>
+        <MenuItem onClick={() => router.push(`/kasir/pesanan/detail/${_id}`)}>
           <ListItemIcon>
             <HiOutlineEye size={25} />
           </ListItemIcon>
@@ -227,7 +205,7 @@ const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
           </ListItemIcon>
           <ListItemText>Hapus Pesanan</ListItemText>
         </MenuItem>
-        {status === OrderStatus.diproses && (
+        {status === OrderStatusEnum.diproses && (
           <MenuItem>
             <ListItemIcon>
               <HiOutlinePencilAlt size={25} />
@@ -235,7 +213,7 @@ const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
             <ListItemText>Edit Pesanan</ListItemText>
           </MenuItem>
         )}
-        {status === OrderStatus.diproses && (
+        {status === OrderStatusEnum.diproses && (
           <MenuItem onClick={handleStatusDone}>
             <ListItemIcon>
               <HiCheck size={25} />
@@ -243,7 +221,7 @@ const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
             <ListItemText>Tandai Selesai</ListItemText>
           </MenuItem>
         )}
-        {status === OrderStatus.diproses && (
+        {status === OrderStatusEnum.diproses && (
           <MenuItem onClick={handleStatusCancel}>
             <ListItemIcon>
               <HiX size={25} />

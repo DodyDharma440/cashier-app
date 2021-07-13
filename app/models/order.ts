@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IOrder } from "@custom-types/order";
+import { IOrderModel } from "@custom-types/order";
 import { OrderStatus } from "@enums/order";
 
 const orderSchema: mongoose.Schema = new mongoose.Schema(
@@ -31,4 +31,4 @@ const orderSchema: mongoose.Schema = new mongoose.Schema(
 );
 
 export default mongoose.models.Order ||
-  mongoose.model<IOrder>("Order", orderSchema);
+  mongoose.model<IOrderModel>("Order", orderSchema);

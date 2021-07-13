@@ -11,7 +11,11 @@ const useDisclosure = () => {
     setIsOpen(false);
   }, [isOpen]);
 
-  return { isOpen, onOpen, onClose };
+  const onToggle = useCallback(() => {
+    setIsOpen((prevState) => !prevState);
+  }, [isOpen]);
+
+  return { isOpen, onOpen, onClose, onToggle };
 };
 
 export default useDisclosure;

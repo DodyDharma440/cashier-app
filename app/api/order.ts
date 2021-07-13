@@ -9,6 +9,13 @@ export const getOrders = (
   return apiCashier.get("/orders", config && config);
 };
 
+export const getOrder = (
+  id?: string | string[],
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<IOrderResponse>> => {
+  return apiCashier.get(`/orders/${id}`, config && config);
+};
+
 export const addOrder = (
   formData: IOrderForm
 ): Promise<AxiosResponse<IOrderResponse>> => {

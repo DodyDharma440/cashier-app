@@ -10,7 +10,7 @@ export interface IOrderProductForm {
 
 export interface IOrderProduct extends IProduct, IOrderProductForm {}
 
-export interface IOrder extends Document {
+export interface IOrderModel extends Document {
   orderName: string;
   author: string;
   products: IOrderProduct[];
@@ -20,6 +20,20 @@ export interface IOrder extends Document {
   createdAt: Date;
   updatedAt: Date;
   _doc?: any;
+}
+
+export interface IOrder {
+  _id: string;
+  orderName: string;
+  author: string;
+  products: IOrderProduct[];
+  totalPrice: number | string;
+  note: string;
+  status: OrderStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  _doc?: any;
+  __v: number;
 }
 
 export interface IOrderResponse {

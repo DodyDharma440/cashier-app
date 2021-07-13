@@ -11,6 +11,7 @@ import TableData from "./TableData";
 import SidebarRight from "./SidebarRight";
 import ScrollContainer from "./ScrollContainer";
 import LoadingDialog from "./LoadingDialog";
+import OrderStatus from "./OrderStatus";
 
 export {
   AppLoading,
@@ -26,4 +27,5 @@ export {
   SidebarRight,
   ScrollContainer,
   LoadingDialog,
+  OrderStatus,
 };

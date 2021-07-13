@@ -4,6 +4,7 @@ import TableRowProduct from "./TableRow";
 import CardProduct from "./Card";
 import ItemCart from "./ItemCart";
 import CardSkeleton from "./CardSkeleton";
+import ItemDetailOrder from "./ItemDetailOrder";
 
 export {
   FormProduct,
@@ -12,4 +13,5 @@ export {
   CardProduct,
   ItemCart,
   CardSkeleton,
+  ItemDetailOrder,
 };
