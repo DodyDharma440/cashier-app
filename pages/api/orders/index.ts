@@ -23,42 +23,46 @@ const handler = async (
       try {
         const userId = req.userData._id;
 
-        const ordersQuery: any = await Order.find({ author: userId });
+        const ordersQuery = await Order.find({ author: userId });
 
-        let ordersData: IOrder[] = [];
+        ordersQuery.map(async (order: IOrder, index: number) => {
+          const arrId: string[] = order.products.map(
+            (product: IOrderProduct) => product.productId
+          );
 
-        if (ordersQuery.length === 0) {
-          return res.status(200).json({
-            orders: [],
+          const products = await Product.find({
+            _id: {
+              $in: arrId,
+            },
           });
-        }
 
-        ordersQuery.map((order: IOrder, indexQuery: number) => {
-          let productsData: IOrderProduct[] = [];
+          products.forEach((product: IProduct, indexProd: number) => {
+            //index from order products
+            const indexOrder = order.products.findIndex(
+              (prod: any) =>
+                prod.productId.toString() === product._id.toString()
+            );
 
-          order.products.map(async (product: IOrderProduct, index: number) => {
-            const productData = await Product.findById(product.productId);
-
-            productsData.push({
-              ...productData._doc,
-              note: product.note,
-              quantity: product.quantity,
-            });
-
-            if (index === order.products.length - 1) {
-              ordersData.push({
-                ...order?._doc,
-                products: productsData,
-              });
-
-              if (indexQuery === ordersQuery.length - 1) {
-                return res.status(200).json({
-                  orders: ordersData,
-                });
-              }
-            }
+            products[indexProd] = {
+              ...product._doc,
+              note: order.products[indexOrder].note,
+              quantity: order.products[indexOrder].quantity,
+            };
           });
+
+          ordersQuery[index] = {
+            ...order._doc,
+            products,
+          };
         });
+
+        setTimeout(
+          () =>
+            res.status(200).json({
+              orders: ordersQuery,
+            }),
+          1000
+        );
       } catch (error) {
         res.status(500).json({
           message: error.message,
@@ -84,38 +88,48 @@ const handler = async (
           });
         }
 
-        let productsData: any = [];
-
         if (products.length === 0) {
           return res.status(400).json({
             message: "Daftar produk masih kosong",
           });
         }
 
-        products.map(async (product: IOrderProductForm, index: number) => {
-          const productData = await Product.findById(product.productId);
-          productsData.push({
-            ...productData._doc,
-            note: product.note,
-            quantity: product.quantity,
-          });
+        const arrId: string[] = products.map(
+          (product: IOrderProductForm) => product.productId
+        );
 
-          if (index === products.length - 1) {
-            const newOrder = await Order.create({
-              orderName,
-              products,
-              totalPrice,
-              author,
-              status: "diproses",
-            });
+        const productsQuery = await Product.find({
+          _id: {
+            $in: arrId,
+          },
+        });
 
-            res.status(201).json({
-              newOrder: {
-                ...newOrder._doc,
-                products: productsData,
-              },
-            });
-          }
+        productsQuery.forEach((product: IProduct, index: number) => {
+          const indexProd = products.findIndex(
+            (prod: IOrderProductForm) =>
+              prod.productId.toString() === product._id.toString()
+          );
+
+          productsQuery[index] = {
+            ...product._doc,
+            note: products[indexProd].note,
+            quantity: products[indexProd].quantity,
+          };
+        });
+
+        const newOrder = await Order.create({
+          orderName,
+          products,
+          totalPrice,
+          author,
+          status: "diproses",
+        });
+
+        res.status(201).json({
+          newOrder: {
+            ...newOrder._doc,
+            products: productsQuery,
+          },
         });
       } catch (error) {
         res.status(500).json({

@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import mongoose from "mongoose";
 import dbConnect from "@utils/dbConnect";
 import Order from "@models/order";
 import { withAuth } from "@middleware/auth";
@@ -23,25 +24,36 @@ const handler = async (
     case "GET":
       try {
         const order = await Order.findById(query.id);
-        let productsData: IOrderProduct[] = [];
 
-        order.products.map(async (product: IOrderProduct, index: number) => {
-          const productData = await Product.findById(product.productId);
+        const arrId: string[] = order.products.map(
+          (product: IOrderProduct) => product.productId
+        );
 
-          productsData.push({
-            ...productData._doc,
-            note: product.note,
-            quantity: product.quantity,
-          });
+        const products = await Product.find({
+          _id: {
+            $in: arrId,
+          },
+        });
 
-          if (index === order.products.length - 1) {
-            res.status(200).json({
-              order: {
-                ...order._doc,
-                products: productsData,
-              },
-            });
-          }
+        products.forEach((product: IProduct, index: number) => {
+          //index from order products
+          const indexProd = order.products.findIndex(
+            (prod: IOrderProductForm) =>
+              prod.productId.toString() === product._id.toString()
+          );
+
+          products[index] = {
+            ...product._doc,
+            note: order.products[indexProd].note,
+            quantity: order.products[indexProd].quantity,
+          };
+        });
+
+        res.status(200).json({
+          order: {
+            ...order._doc,
+            products,
+          },
         });
       } catch (error) {
         res.status(500).json({
@@ -75,38 +87,48 @@ const handler = async (
           }
         }
 
-        let productsData: any = [];
+        const arrId: string[] = products.map(
+          (product: IOrderProductForm) => product.productId
+        );
 
-        products.map(async (product: IOrderProductForm, index: number) => {
-          const productData = await Product.findById(product.productId);
-          productsData.push({
-            ...productData._doc,
-            note: product.note,
-            quantity: product.quantity,
-          });
+        const productsQuery = await Product.find({
+          _id: {
+            $in: arrId,
+          },
+        });
 
-          if (index === products.length - 1) {
-            const updatedOrder = await Order.findByIdAndUpdate(
-              query.id,
-              {
-                orderName,
-                products,
-                totalPrice,
-                author,
-                status,
-              },
-              {
-                new: true,
-              }
-            );
+        productsQuery.forEach((product: IProduct, index: number) => {
+          const indexProd = products.findIndex(
+            (prod: IOrderProductForm) =>
+              prod.productId.toString() === product._id.toString()
+          );
 
-            res.status(200).json({
-              updatedOrder: {
-                ...updatedOrder._doc,
-                products: productsData,
-              },
-            });
+          productsQuery[index] = {
+            ...product._doc,
+            note: products[indexProd].note,
+            quantity: products[indexProd].quantity,
+          };
+        });
+
+        const updatedOrder = await Order.findByIdAndUpdate(
+          query.id,
+          {
+            orderName,
+            products,
+            totalPrice,
+            author,
+            status,
+          },
+          {
+            new: true,
           }
+        );
+
+        res.status(200).json({
+          updatedOrder: {
+            ...updatedOrder._doc,
+            products: productsQuery,
+          },
         });
       } catch (error) {
         res.status(500).json({

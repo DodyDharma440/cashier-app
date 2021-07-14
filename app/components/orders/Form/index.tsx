@@ -214,7 +214,7 @@ const Form: React.FC<Props> = ({ categories }) => {
       }
 
       if (error) {
-        alert(error.message);
+        alert(error.response.data.message || error.message);
       }
     });
   };

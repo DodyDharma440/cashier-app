@@ -21,6 +21,7 @@ export interface IProduct {
   createdAt: Date;
   updatedAt: Date;
   __v: number;
+  _doc?: any;
 }
 
 export interface IProductResponse {
