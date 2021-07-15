@@ -21,7 +21,7 @@ export const useUploadImage = async (
     const directory =
       process.env.NODE_ENV === "development"
         ? `public/assets/images/upload`
-        : path.join(process.cwd(), "assets/images/upload");
+        : path.join(process.cwd(), "public/assets/images/upload");
 
     // console.log(__dirname);
 
