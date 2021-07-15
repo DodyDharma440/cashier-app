@@ -20,7 +20,7 @@ export const useUploadImage = async (
     const directory =
       process.env.NODE_ENV === "development"
         ? `public/assets/images/upload`
-        : `assets/images/upload`;
+        : `/assets/images/upload`;
 
     const storage = multer.diskStorage({
       destination: (req, file, cb) => {
@@ -54,6 +54,7 @@ export const useUploadImage = async (
   } catch (error) {
     return res.status(500).json({
       message: error.message,
+      test: "error middleware image",
     });
   }
 };

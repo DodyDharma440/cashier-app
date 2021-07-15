@@ -55,7 +55,7 @@ const handler = async (
           const directory =
             process.env.NODE_ENV === "development"
               ? `public/assets/images/upload/${imageName}`
-              : `assets/images/upload/${imageName}`;
+              : `/assets/images/upload/${imageName}`;
 
           unlink(directory, (error) => {
             if (error) {
@@ -103,7 +103,7 @@ const handler = async (
           const directory =
             process.env.NODE_ENV === "development"
               ? `public/assets/images/upload/${imageName}`
-              : `assets/images/upload/${imageName}`;
+              : `/assets/images/upload/${imageName}`;
 
           unlink(directory, (error) => {
             if (error) {
