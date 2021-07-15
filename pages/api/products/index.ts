@@ -18,31 +18,44 @@ const handler = async (
       try {
         const { category, search } = req.query;
 
-        let products: any;
+        let products = await Product.find();
 
-        if (Object.keys(req.query).length === 0) {
-          products = await Product.find();
-        } else {
-          //filter category
-          if (category && category !== "all") {
-            products = await Product.find({ categoryName: category });
-          } else {
-            products = await Product.find();
-          }
+        if (category && category !== "all") {
+          const categoryQuery = await Category.findOne({
+            categoryName: category,
+          });
 
-          //Search by name
-          if (search) {
-            products = await Product.find({
-              productName: { $regex: search, $options: "i" },
-            });
-          }
+          products = await Product.find({ categoryId: categoryQuery._id });
         }
 
-        res.status(200).json({
-          products,
-          totalProducts: products.length,
-          test: req.query,
+        if (search) {
+          products = await Product.find({
+            productName: { $regex: search, $options: "i" },
+          });
+        }
+
+        products.map(async (product: any, index: number) => {
+          const { categoryName } = await Category.findById(product.categoryId);
+
+          if (!categoryName) {
+            return res.status(401).json({
+              message: "Produk ini tak terdaftar dalam kategori",
+            });
+          }
+
+          product._doc.categoryName = categoryName;
+
+          products[index] = product;
         });
+
+        setTimeout(
+          () =>
+            res.status(200).json({
+              products,
+              totalProducts: products.length,
+            }),
+          1000
+        );
       } catch (error) {
         res.status(500).json({
           message: error.message,
@@ -56,16 +69,17 @@ const handler = async (
 
         const formData: IProductForm = req.body;
         const { productName, categoryId, price, description } = formData;
-        const { categoryName } = await Category.findById(categoryId);
 
         const newProduct = await Product.create({
           productName,
           categoryId,
-          categoryName,
           price,
           description,
           imageUrl: req.imageUrl || "",
         });
+
+        const { categoryName } = await Category.findById(categoryId);
+        newProduct._doc.categoryName = categoryName;
 
         res.status(201).json({
           newProduct,

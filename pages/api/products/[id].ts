@@ -19,6 +19,16 @@ const handler = async (
     case "GET":
       try {
         const product = await Product.findById(req.query.id);
+        const { categoryName } = await Category.findById(product.categoryId);
+
+        if (!categoryName) {
+          return res.status(401).json({
+            message: "Produk ini tak terdaftar dalam kategori",
+          });
+        }
+
+        product._doc.categoryName = categoryName;
+
         res.status(200).json({
           product,
         });
@@ -37,13 +47,17 @@ const handler = async (
 
         const formData: IProductForm = req.body;
         const { productName, categoryId, price, description } = formData;
-        const { categoryName } = await Category.findById(categoryId);
 
         if (req.imageUrl) {
           const arrImgUrl = existingProduct.imageUrl.split("/");
           const imageName = arrImgUrl[arrImgUrl.length - 1];
 
-          unlink(`public/assets/images/upload/${imageName}`, (error) => {
+          const directory =
+            process.env.NODE_ENV === "development"
+              ? `public/assets/images/upload/${imageName}`
+              : `assets/images/upload/${imageName}`;
+
+          unlink(directory, (error) => {
             if (error) {
               console.log(error);
             }
@@ -55,7 +69,6 @@ const handler = async (
           {
             productName,
             categoryId,
-            categoryName,
             price,
             description,
             imageUrl: req.imageUrl || existingProduct.imageUrl,
@@ -64,6 +77,9 @@ const handler = async (
             new: true,
           }
         );
+
+        const { categoryName } = await Category.findById(categoryId);
+        updatedProduct._doc.categoryName = categoryName;
 
         res.status(200).json({
           updatedProduct,
@@ -84,7 +100,12 @@ const handler = async (
           const arrImgUrl = existingProduct.imageUrl.split("/");
           const imageName = arrImgUrl[arrImgUrl.length - 1];
 
-          unlink(`public/assets/images/upload/${imageName}`, (error) => {
+          const directory =
+            process.env.NODE_ENV === "development"
+              ? `public/assets/images/upload/${imageName}`
+              : `assets/images/upload/${imageName}`;
+
+          unlink(directory, (error) => {
             if (error) {
               console.log(error);
             }
