@@ -67,24 +67,29 @@ const handler = async (
       try {
         await useUploadImage(req, res);
 
-        const formData: IProductForm = req.body;
-        const { productName, categoryId, price, description } = formData;
-
-        const newProduct = await Product.create({
-          productName,
-          categoryId,
-          price,
-          description,
-          imageUrl: req.imageUrl || "",
+        res.send({
+          test: req.imageUrl,
+          // message: `${process.cwd()}/`,
         });
 
-        const { categoryName } = await Category.findById(categoryId);
-        newProduct._doc.categoryName = categoryName;
+        // const formData: IProductForm = req.body;
+        // const { productName, categoryId, price, description } = formData;
 
-        res.status(201).json({
-          newProduct,
-          message: "Produk berhasil dibuat",
-        });
+        // const newProduct = await Product.create({
+        //   productName,
+        //   categoryId,
+        //   price,
+        //   description,
+        //   imageUrl: req.imageUrl || "",
+        // });
+
+        // const { categoryName } = await Category.findById(categoryId);
+        // newProduct._doc.categoryName = categoryName;
+
+        // res.status(201).json({
+        //   newProduct,
+        //   message: "Produk berhasil dibuat",
+        // });
       } catch (error) {
         res.status(500).json({
           message: error.message,

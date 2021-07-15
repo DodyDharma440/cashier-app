@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import multer from "multer";
+import path from "path";
 import { runMiddleware } from "@utils/runMiddleware";
 import { makeFileName } from "@utils/makeFileName";
 
@@ -20,7 +21,9 @@ export const useUploadImage = async (
     const directory =
       process.env.NODE_ENV === "development"
         ? `public/assets/images/upload`
-        : `/assets/images/upload`;
+        : path.join(process.cwd(), "assets/images/upload");
+
+    // console.log(__dirname);
 
     const storage = multer.diskStorage({
       destination: (req, file, cb) => {
