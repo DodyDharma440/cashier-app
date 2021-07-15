@@ -54,7 +54,10 @@ export const useUploadImage = async (
   } catch (error) {
     return res.status(500).json({
       message: error.message,
-      test: "error middleware image",
+      test: {
+        dirname: __dirname,
+        cwd: process.cwd(),
+      },
     });
   }
 };
