@@ -11,7 +11,7 @@ import { IMenuItem } from "@custom-types/layout";
 
 type Props = {
   children: React.ReactNode;
-  withSidebarLeft?: boolean;
+  withSidebarRight?: boolean;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
     appBar: {
       backgroundColor: "#fff",
     },
-    withSidebarLeft: {
+    withSidebarRight: {
       marginRight: 460,
       [theme.breakpoints.down("md")]: {
         marginRight: 0,
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Layout: React.FC<Props> = ({ children, withSidebarLeft }) => {
+const Layout: React.FC<Props> = ({ children, withSidebarRight }) => {
   const classes = useStyles();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const userData = useUserData();
@@ -72,7 +72,7 @@ const Layout: React.FC<Props> = ({ children, withSidebarLeft }) => {
       )}
       <Box
         className={clsx(classes.content, {
-          [classes.withSidebarLeft]: withSidebarLeft,
+          [classes.withSidebarRight]: withSidebarRight,
         })}
       >
         {children}

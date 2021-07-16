@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
 import { OrderStatus } from "@enums/order";
-import { IProduct } from "@custom-types/product";
+import { IProduct, IProductCart } from "@custom-types/product";
 
 export interface IOrderProductForm {
   productId: string;
@@ -49,6 +49,13 @@ export interface IOrderResponse {
 export interface IOrderForm {
   orderName: string;
   products: IOrderProductForm[];
+  status?: OrderStatus;
+  totalPrice: number;
+}
+
+export interface IOrderEditVal {
+  orderName: string;
+  products: IProductCart[];
   status?: OrderStatus;
   totalPrice: number;
 }

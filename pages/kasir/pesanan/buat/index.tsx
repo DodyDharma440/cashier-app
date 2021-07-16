@@ -17,7 +17,7 @@ const BuatPesanan: React.FC<Props> = ({ categories }) => {
         <title>Cashier | Tambah Pesanan</title>
       </Head>
 
-      <Layout withSidebarLeft>
+      <Layout withSidebarRight>
         <HeaderTitle title="Buat Pesanan Baru" />
         <FormOrder categories={categories} />
       </Layout>

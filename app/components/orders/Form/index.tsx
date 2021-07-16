@@ -7,19 +7,31 @@ import {
   Button,
   CircularProgress,
 } from "@material-ui/core";
-import { IOrderForm, IOrder, IOrderProductForm } from "@custom-types/order";
+import {
+  IOrderForm,
+  IOrder,
+  IOrderProductForm,
+  IOrderEditVal,
+} from "@custom-types/order";
 import { OrderStatus } from "@enums/order";
-import { SidebarRight, HeaderTitle, ScrollContainer } from "@components/common";
+import {
+  SidebarRight,
+  LoadingDialog,
+  HeaderTitle,
+  ScrollContainer,
+} from "@components/common";
 import { ItemCart } from "@components/products";
 import { MenuOrder } from "@components/orders";
 import { ICategory } from "@custom-types/category";
 import { IProductCart, IProduct } from "@custom-types/product";
 import { currencyFormatter } from "@utils/currency";
-import { addOrder } from "@actions/order";
+import { addOrder, updateOrder } from "@actions/order";
 import { useProcess } from "@hooks/index";
 
 type Props = {
   categories: ICategory[];
+  editValue?: IOrderEditVal;
+  editId?: string;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -46,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Form: React.FC<Props> = ({ categories }) => {
+const Form: React.FC<Props> = ({ categories, editValue, editId }) => {
   const classes = useStyles();
   const router = useRouter();
 
@@ -207,7 +219,7 @@ const Form: React.FC<Props> = ({ categories }) => {
     e.preventDefault();
     startLoading();
 
-    addOrder(formValue, (data: IOrder, error: any) => {
+    const cbAction = (data: IOrder, error: any) => {
       endLoading();
       if (data) {
         router.push("/kasir/pesanan");
@@ -216,7 +228,13 @@ const Form: React.FC<Props> = ({ categories }) => {
       if (error) {
         alert(error.response.data.message || error.message);
       }
-    });
+    };
+
+    if (editValue && editId) {
+      updateOrder(editId, formValue, cbAction);
+    } else {
+      addOrder(formValue, cbAction);
+    }
   };
 
   useEffect(() => {
@@ -243,6 +261,36 @@ const Form: React.FC<Props> = ({ categories }) => {
       }
     });
   }, [cart]);
+
+  useEffect(() => {
+    if (editValue) {
+      const { orderName, products, status, totalPrice } = editValue;
+      const productsValue: any[] = [];
+
+      products.map((product) => {
+        productsValue.push(product);
+      });
+
+      productsValue.map((product: any, index: number) => {
+        productsValue[index] = {
+          productId: product._id,
+          note: product.note,
+          quantity: product.quantity,
+        };
+      });
+
+      setCart(products);
+
+      setFormValue({
+        orderName,
+        products: productsValue,
+        status,
+        totalPrice,
+      });
+    }
+  }, [editValue]);
+
+  useEffect(() => console.log("cart", cart), [cart]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -275,6 +323,7 @@ const Form: React.FC<Props> = ({ categories }) => {
                       onChangeNote={handleChangeNote}
                       onIncreaseQty={handleIncreaseQty}
                       onDecreaseQty={handleDecreaseQty}
+                      onRemoveItem={handleRemoveCart}
                     />
                   ))}
                 </>
@@ -299,15 +348,13 @@ const Form: React.FC<Props> = ({ categories }) => {
                 fullWidth
                 color="primary"
                 variant="contained"
-                endIcon={
-                  isLoading && <CircularProgress color="secondary" size={15} />
-                }
               >
                 Simpan
               </Button>
             </div>
           )}
         </div>
+        {isLoading && <LoadingDialog />}
       </SidebarRight>
     </form>
   );

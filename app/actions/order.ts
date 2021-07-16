@@ -16,6 +16,19 @@ export const addOrder = async (
   }
 };
 
+export const updateOrder = async (
+  id: string,
+  formData: IOrderForm,
+  callback: (success?: any, error?: any) => void
+) => {
+  try {
+    const { data } = await api.updateOrder(id, formData);
+    callback(data);
+  } catch (error) {
+    callback(null, error);
+  }
+};
+
 export const deleteOrder = async (
   id: string,
   theme: Theme,

@@ -61,6 +61,7 @@ const DetailOrder: React.FC<Props> = ({ order }) => {
         <HeaderTitle title="Detail Pesanan" />
         {status === OrderStatusEnum.diproses && (
           <Button
+            onClick={() => router.push(`/kasir/pesanan/edit/${_id}`)}
             style={{ marginRight: 8 }}
             variant="contained"
             color="primary"

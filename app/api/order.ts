@@ -22,6 +22,13 @@ export const addOrder = (
   return apiCashier.post("/orders", formData);
 };
 
+export const updateOrder = (
+  id: string,
+  formData: IOrderForm
+): Promise<AxiosResponse<IOrderResponse>> => {
+  return apiCashier.put(`/orders/${id}`, formData);
+};
+
 export const deleteOrder = (
   id: string
 ): Promise<AxiosResponse<IOrderResponse>> => {

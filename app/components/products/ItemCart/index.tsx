@@ -8,6 +8,7 @@ type Props = {
   item: IProductCart;
   onIncreaseQty: (id: string) => void;
   onDecreaseQty: (id: string) => void;
+  onRemoveItem: (id: string) => void;
   onChangeNote: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -38,6 +39,9 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       paddingBottom: theme.spacing(2),
     },
+    contentBottom: {
+      display: "flex",
+    },
     title: {
       fontWeight: "bold",
     },
@@ -52,6 +56,14 @@ const useStyles = makeStyles((theme: Theme) =>
       lineHeight: 1,
       fontSize: 16,
     },
+    deleteButton: {
+      padding: `6px 12px`,
+      minWidth: 0,
+      minHeight: 0,
+      lineHeight: 1,
+      textTransform: "capitalize",
+      marginLeft: theme.spacing(1),
+    },
     qtyLabel: {
       margin: `0px ${theme.spacing(1)}px`,
     },
@@ -63,6 +75,7 @@ const ItemCart: React.FC<Props> = ({
   onChangeNote,
   onDecreaseQty,
   onIncreaseQty,
+  onRemoveItem,
 }) => {
   const classes = useStyles();
   const { _id, productName, price, imageUrl, quantity, note } = item;
@@ -109,14 +122,24 @@ const ItemCart: React.FC<Props> = ({
                 </Button>
               </div>
             </div>
-            <TextField
-              name={_id}
-              value={note}
-              onChange={onChangeNote}
-              placeholder="Catatan..."
-              fullWidth
-              autoComplete="off"
-            />
+            <div className={classes.contentBottom}>
+              <TextField
+                name={_id}
+                value={note}
+                onChange={onChangeNote}
+                placeholder="Catatan..."
+                fullWidth
+                autoComplete="off"
+              />
+              <Button
+                onClick={() => onRemoveItem(_id)}
+                className={classes.deleteButton}
+                variant="contained"
+                color="secondary"
+              >
+                Hapus
+              </Button>
+            </div>
           </div>
         </div>
         <Divider />

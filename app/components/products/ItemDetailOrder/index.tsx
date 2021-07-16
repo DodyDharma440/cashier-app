@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     image: {
       width: "35%",
-      height: 96,
+      height: 100,
       boxShadow: "1px 1px 4px #0000003d",
       borderRadius: theme.spacing(1),
       marginRight: theme.spacing(1),
@@ -65,7 +65,7 @@ const ListItem: React.FC<LiProps> = ({ children, label }) => {
 
 const ItemDetailOrder: React.FC<Props> = ({ item }) => {
   const classes = useStyles();
-  const { imageUrl, productName, price, quantity } = item;
+  const { imageUrl, productName, price, quantity, note } = item;
 
   return (
     <Card className={classes.root}>
@@ -91,6 +91,8 @@ const ItemDetailOrder: React.FC<Props> = ({ item }) => {
               {currencyFormatter(Number(price) * quantity)}
             </Typography>
           </ListItem>
+          <Divider className={classes.divider} />
+          <Typography variant="body2">{note}</Typography>
         </div>
       </CardContent>
     </Card>

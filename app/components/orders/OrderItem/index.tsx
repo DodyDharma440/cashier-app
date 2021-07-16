@@ -206,7 +206,7 @@ const OrderItem: React.FC<Props> = ({ item, onDelete, onUpdateStatus }) => {
           <ListItemText>Hapus Pesanan</ListItemText>
         </MenuItem>
         {status === OrderStatusEnum.diproses && (
-          <MenuItem>
+          <MenuItem onClick={() => router.push(`/kasir/pesanan/edit/${_id}`)}>
             <ListItemIcon>
               <HiOutlinePencilAlt size={25} />
             </ListItemIcon>
