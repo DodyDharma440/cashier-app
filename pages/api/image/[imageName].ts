@@ -3,22 +3,23 @@ import path from "path";
 import fs from "fs";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { imageName } = req.query;
+  try {
+    const { imageName } = req.query;
 
-  const arrImgName: any = typeof imageName === "string" && imageName.split(".");
-  const fileExt = arrImgName[arrImgName.length - 1];
+    const arrImgName: any =
+      typeof imageName === "string" && imageName.split(".");
+    const fileExt = arrImgName[arrImgName.length - 1];
 
-  const prodFilePath = `https://cashier-app.vercel.app/assets/images/upload/${imageName}`;
-  const devFilePath = `public/assets/images/upload/${imageName}`;
+    const filePath = `public/assets/images/upload/${imageName}`;
+    const imageBuffer = fs.readFileSync(filePath);
 
-  const filePath =
-    process.env.NODE_ENV !== "development" ? prodFilePath : devFilePath;
-
-  // const filePath = `public/assets/images/upload/${imageName}`;
-  const imageBuffer = fs.readFileSync(filePath);
-
-  res.setHeader("Content-Type", `image/${fileExt.toLowerCase()}`);
-  res.send(imageBuffer);
+    res.setHeader("Content-Type", `image/${fileExt.toLowerCase()}`);
+    res.send(imageBuffer);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
 
 export default handler;

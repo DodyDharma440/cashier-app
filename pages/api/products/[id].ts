@@ -52,10 +52,7 @@ const handler = async (
           const arrImgUrl = existingProduct.imageUrl.split("/");
           const imageName = arrImgUrl[arrImgUrl.length - 1];
 
-          const directory =
-            process.env.NODE_ENV === "development"
-              ? `public/assets/images/upload/${imageName}`
-              : `/assets/images/upload/${imageName}`;
+          const directory = `public/assets/images/upload/${imageName}`;
 
           unlink(directory, (error) => {
             if (error) {
@@ -100,10 +97,7 @@ const handler = async (
           const arrImgUrl = existingProduct.imageUrl.split("/");
           const imageName = arrImgUrl[arrImgUrl.length - 1];
 
-          const directory =
-            process.env.NODE_ENV === "development"
-              ? `public/assets/images/upload/${imageName}`
-              : `/assets/images/upload/${imageName}`;
+          const directory = `public/assets/images/upload/${imageName}`;
 
           unlink(directory, (error) => {
             if (error) {

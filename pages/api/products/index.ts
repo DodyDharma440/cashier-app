@@ -67,11 +67,6 @@ const handler = async (
       try {
         await useUploadImage(req, res);
 
-        // res.send({
-        //   test: req.imageUrl,
-        //   // message: `${process.cwd()}/`,
-        // });
-
         const formData: IProductForm = req.body;
         const { productName, categoryId, price, description } = formData;
 

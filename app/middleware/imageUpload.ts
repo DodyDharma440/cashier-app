@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import multer from "multer";
-import path from "path";
 import { runMiddleware } from "@utils/runMiddleware";
 import { makeFileName } from "@utils/makeFileName";
 
@@ -18,18 +17,9 @@ export const useUploadImage = async (
   try {
     let imageName = "";
 
-    const prodFilePath = `https://cashier-app.vercel.app/assets/images/upload`;
-
-    const directory =
-      process.env.NODE_ENV === "development"
-        ? `public/assets/images/upload`
-        : prodFilePath;
-
-    // console.log(__dirname);
-
     const storage = multer.diskStorage({
       destination: (req, file, cb) => {
-        cb(null, directory);
+        cb(null, "public/assets/images/upload");
       },
       filename: (req, file, cb) => {
         imageName = makeFileName(file, res);
