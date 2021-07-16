@@ -17,14 +17,9 @@ export const useUploadImage = async (
   try {
     let imageName = "";
 
-    const directory =
-      process.env.NODE_ENV === "development"
-        ? `public/assets/images/upload`
-        : `assets/images/upload`;
-
     const storage = multer.diskStorage({
       destination: (req, file, cb) => {
-        cb(null, directory);
+        cb(null, "public/assets/images/upload");
       },
       filename: (req, file, cb) => {
         imageName = makeFileName(file, res);
