@@ -18,7 +18,7 @@ export const useUploadImage = async (
   try {
     let imageName = "";
 
-    const prodFilePath = `https://cashier-app.vercel.app/assets/images/upload/${imageName}`;
+    const prodFilePath = `https://cashier-app.vercel.app/assets/images/upload`;
 
     const directory =
       process.env.NODE_ENV === "development"
